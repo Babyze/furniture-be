@@ -1,0 +1,17 @@
+services:
+  mysql:
+    image: mysql
+    container_name: furniture-database
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: furniture
+      MYSQL_USER: furniture
+      MYSQL_PASSWORD: furniture
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
