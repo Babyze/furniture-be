@@ -6,7 +6,7 @@ export interface IDatabase<T> {
   query(sql: string, params: any[]): Promise<T[]>;
   getAll(): Promise<T[]>;
   getById(id: IBaseModel['id']): Promise<T | null>;
-  insert(data: Partial<T>): Promise<T>;
+  insert(data: Partial<T> & Pick<IBaseModel, 'id'>): Promise<T>;
   update(id: IBaseModel['id'], data: Partial<T>): Promise<T>;
   delete(id: IBaseModel['id']): Promise<T>;
   transaction(queries: { sql: string; params: any[] }[]): Promise<boolean>;
