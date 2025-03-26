@@ -1,11 +1,12 @@
 import { UserRepository } from '@src/repositories/user.repository';
 import { generateUUID } from '@src/utils/uuid.util';
-import { hashPassword } from '@src/utils/password.util';
+import { hashPassword, comparePassword } from '@src/utils/password.util';
 import { generateTokenPair } from '@src/utils/jwt.util';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { CustomerAuthService } from '@src/services/customer/auth/auth.service';
 import { CustomerSignUpRequestDto } from '@src/dto/customer/signup.dto';
-import { ConflictError } from '@src/errors/http.error';
+import { CustomerSignInRequestDto } from '@src/dto/customer/signin.dto';
+import { ConflictError, UnauthorizedError } from '@src/errors/http.error';
 
 jest.mock('@src/repositories/user.repository');
 jest.mock('@src/utils/uuid.util');
@@ -52,7 +53,6 @@ describe('CustomerAuthService', () => {
       userRepository.insert.mockResolvedValue({
         id: mockUserId,
         email: mockSignUpData.email,
-        username: mockSignUpData.username,
         password: mockHashedPassword,
         fullName: mockSignUpData.fullName,
         isAgreeAllPolicy: true,
@@ -75,7 +75,6 @@ describe('CustomerAuthService', () => {
         {
           id: mockUserId,
           email: mockSignUpData.email,
-          username: mockSignUpData.username,
           password: mockHashedPassword,
           fullName: mockSignUpData.fullName,
           isAgreeAllPolicy: true,
@@ -85,6 +84,71 @@ describe('CustomerAuthService', () => {
       ]);
 
       await expect(customerAuthService.signUp(mockSignUpData)).rejects.toThrow(ConflictError);
+    });
+  });
+
+  describe('signIn', () => {
+    const mockSignInData: CustomerSignInRequestDto = {
+      email: 'test@example.com',
+      password: 'password123',
+    };
+
+    const mockUserId = '123e4567-e89b-12d3-a456-426614174000';
+    const mockHashedPassword = 'hashedPassword123';
+    const mockTokens = {
+      accessToken: 'mock-access-token',
+      refreshToken: 'mock-refresh-token',
+    };
+
+    beforeEach(() => {
+      (generateTokenPair as jest.Mock).mockReturnValue(mockTokens);
+    });
+
+    it('should return tokens when credentials are valid', async () => {
+      userRepository.query.mockResolvedValue([
+        {
+          id: mockUserId,
+          email: mockSignInData.email,
+          password: mockHashedPassword,
+          fullName: 'Test User',
+          isAgreeAllPolicy: true,
+          createdDate: new Date(),
+          updatedDate: new Date(),
+        },
+      ]);
+
+      (comparePassword as jest.Mock).mockResolvedValue(true as unknown as never);
+
+      const result = await customerAuthService.signIn(mockSignInData);
+
+      expect(result).toEqual({
+        accessToken: mockTokens.accessToken,
+        refreshToken: mockTokens.refreshToken,
+      });
+    });
+
+    it('should throw error when user not found', async () => {
+      userRepository.query.mockResolvedValue([]);
+
+      await expect(customerAuthService.signIn(mockSignInData)).rejects.toThrow(UnauthorizedError);
+    });
+
+    it('should throw error when password is invalid', async () => {
+      userRepository.query.mockResolvedValue([
+        {
+          id: mockUserId,
+          email: mockSignInData.email,
+          password: mockHashedPassword,
+          fullName: 'Test User',
+          isAgreeAllPolicy: true,
+          createdDate: new Date(),
+          updatedDate: new Date(),
+        },
+      ]);
+
+      (comparePassword as jest.Mock).mockResolvedValue(false as unknown as never);
+
+      await expect(customerAuthService.signIn(mockSignInData)).rejects.toThrow(UnauthorizedError);
     });
   });
 });

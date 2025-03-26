@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 // Set default test environment variables if not set
+process.env.PORT = '0';
 process.env.JWT_SECRET = process.env.JWT_SECRET || 'test-secret-key';
 process.env.JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'test-refresh-secret-key';
 process.env.JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1h';

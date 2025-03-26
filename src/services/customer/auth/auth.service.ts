@@ -1,11 +1,11 @@
-import { generateTokenPair } from '@src/utils/jwt.util';
-import { hashPassword } from '@src/utils/password.util';
-import { UserRepository } from '@src/repositories/user.repository';
-import { User } from '@src/models/user.model';
-import { generateUUID } from '@src/utils/uuid.util';
+import { CustomerSignInRequestDto, CustomerSignInResponseDto } from '@src/dto/customer/signin.dto';
 import { CustomerSignUpRequestDto, CustomerSignUpResponseDto } from '@src/dto/customer/signup.dto';
-import { ConflictError } from '@src/errors/http.error';
-
+import { ConflictError, UnauthorizedError } from '@src/errors/http.error';
+import { User } from '@src/models/user.model';
+import { UserRepository } from '@src/repositories/user.repository';
+import { generateTokenPair } from '@src/utils/jwt.util';
+import { comparePassword, hashPassword } from '@src/utils/password.util';
+import { generateUUID } from '@src/utils/uuid.util';
 export class CustomerAuthService {
   private userRepository: UserRepository;
 
@@ -28,7 +28,6 @@ export class CustomerAuthService {
     const newUser: User = {
       id: generateUUID(),
       email: signUpDto.email,
-      username: signUpDto.username,
       password: hashedPassword,
       fullName: signUpDto.fullName,
       isAgreeAllPolicy: true,
@@ -49,5 +48,29 @@ export class CustomerAuthService {
       accessToken,
       refreshToken,
     );
+  }
+
+  async signIn(signInDto: CustomerSignInRequestDto): Promise<CustomerSignInResponseDto> {
+    const users = await this.userRepository.query('SELECT * FROM user WHERE email = ?', [
+      signInDto.email,
+    ]);
+
+    if (users.length === 0) {
+      throw new UnauthorizedError('Invalid login information');
+    }
+
+    const user = users[0];
+    const isPasswordValid = await comparePassword(signInDto.password, user.password);
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedError('Invalid login information');
+    }
+
+    const { accessToken, refreshToken } = generateTokenPair({
+      id: user.id,
+      email: user.email,
+    });
+
+    return new CustomerSignInResponseDto(accessToken, refreshToken);
   }
 }
