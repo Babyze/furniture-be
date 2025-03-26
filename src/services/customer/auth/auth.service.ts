@@ -1,11 +1,20 @@
-import { CustomerSignInRequestDto, CustomerSignInResponseDto } from '@src/dto/customer/signin.dto';
-import { CustomerSignUpRequestDto, CustomerSignUpResponseDto } from '@src/dto/customer/signup.dto';
+import { RefreshTokenResponseDto } from '@src/dto/customer/auth/refresh-token.dto';
+import {
+  CustomerSignInRequestDto,
+  CustomerSignInResponseDto,
+} from '@src/dto/customer/auth/signin.dto';
+import {
+  CustomerSignUpRequestDto,
+  CustomerSignUpResponseDto,
+} from '@src/dto/customer/auth/signup.dto';
 import { ConflictError, UnauthorizedError } from '@src/errors/http.error';
 import { User } from '@src/models/user.model';
 import { UserRepository } from '@src/repositories/user.repository';
-import { generateTokenPair } from '@src/utils/jwt.util';
+import { generateTokenPair, verifyRefreshToken } from '@src/utils/jwt.util';
 import { comparePassword, hashPassword } from '@src/utils/password.util';
 import { generateUUID } from '@src/utils/uuid.util';
+import jwt from 'jsonwebtoken';
+
 export class CustomerAuthService {
   private userRepository: UserRepository;
 
@@ -72,5 +81,32 @@ export class CustomerAuthService {
     });
 
     return new CustomerSignInResponseDto(accessToken, refreshToken);
+  }
+
+  async refreshToken(refreshToken: string): Promise<RefreshTokenResponseDto> {
+    try {
+      const decoded = verifyRefreshToken(refreshToken);
+
+      const user = await this.userRepository.getById(decoded.id);
+
+      if (!user) {
+        throw new UnauthorizedError('Invalid refresh token');
+      }
+
+      const newAccessToken = generateTokenPair({
+        id: user.id,
+        email: user.email,
+      });
+
+      return {
+        accessToken: newAccessToken.accessToken,
+        refreshToken: refreshToken,
+      };
+    } catch (error) {
+      if (error instanceof jwt.JsonWebTokenError) {
+        throw new UnauthorizedError('Invalid refresh token');
+      }
+      throw error;
+    }
   }
 }

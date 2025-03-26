@@ -1,12 +1,13 @@
-import { UserRepository } from '@src/repositories/user.repository';
-import { generateUUID } from '@src/utils/uuid.util';
-import { hashPassword, comparePassword } from '@src/utils/password.util';
-import { generateTokenPair } from '@src/utils/jwt.util';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
-import { CustomerAuthService } from '@src/services/customer/auth/auth.service';
-import { CustomerSignUpRequestDto } from '@src/dto/customer/signup.dto';
-import { CustomerSignInRequestDto } from '@src/dto/customer/signin.dto';
+import { CustomerSignInRequestDto } from '@src/dto/customer/auth/signin.dto';
+import { CustomerSignUpRequestDto } from '@src/dto/customer/auth/signup.dto';
 import { ConflictError, UnauthorizedError } from '@src/errors/http.error';
+import { UserRepository } from '@src/repositories/user.repository';
+import { CustomerAuthService } from '@src/services/customer/auth/auth.service';
+import { generateTokenPair, verifyRefreshToken } from '@src/utils/jwt.util';
+import { comparePassword, hashPassword } from '@src/utils/password.util';
+import { generateUUID } from '@src/utils/uuid.util';
+import * as jwt from 'jsonwebtoken';
 
 jest.mock('@src/repositories/user.repository');
 jest.mock('@src/utils/uuid.util');
@@ -149,6 +150,71 @@ describe('CustomerAuthService', () => {
       (comparePassword as jest.Mock).mockResolvedValue(false as unknown as never);
 
       await expect(customerAuthService.signIn(mockSignInData)).rejects.toThrow(UnauthorizedError);
+    });
+  });
+
+  describe('refreshToken', () => {
+    it('should return new access token when refresh token is valid', async () => {
+      const mockUser = {
+        id: '123',
+        email: 'test@example.com',
+        password: 'hashedPassword',
+        fullName: 'Test User',
+        isAgreeAllPolicy: true,
+        createdDate: new Date(),
+        updatedDate: new Date(),
+      };
+
+      const mockDecodedToken = {
+        id: '123',
+        email: 'test@example.com',
+      };
+
+      const mockNewTokens = {
+        accessToken: 'new-access-token',
+        refreshToken: 'new-refresh-token',
+      };
+
+      (verifyRefreshToken as jest.Mock).mockReturnValue(mockDecodedToken);
+      userRepository.getById.mockResolvedValue(mockUser);
+      (generateTokenPair as jest.Mock).mockReturnValue(mockNewTokens);
+
+      const result = await customerAuthService.refreshToken('valid-refresh-token');
+
+      expect(result).toEqual({
+        accessToken: mockNewTokens.accessToken,
+        refreshToken: 'valid-refresh-token',
+      });
+      expect(verifyRefreshToken).toHaveBeenCalledWith('valid-refresh-token');
+      expect(userRepository.getById).toHaveBeenCalledWith(mockDecodedToken.id);
+      expect(generateTokenPair).toHaveBeenCalledWith({
+        id: mockUser.id,
+        email: mockUser.email,
+      });
+    });
+
+    it('should throw UnauthorizedError when refresh token is invalid', async () => {
+      (verifyRefreshToken as jest.Mock).mockImplementation(() => {
+        throw new jwt.JsonWebTokenError('Invalid token');
+      });
+
+      await expect(customerAuthService.refreshToken('invalid-token')).rejects.toThrow(
+        UnauthorizedError,
+      );
+    });
+
+    it('should throw UnauthorizedError when user not found', async () => {
+      const mockDecodedToken = {
+        id: '123',
+        email: 'test@example.com',
+      };
+
+      (verifyRefreshToken as jest.Mock).mockReturnValue(mockDecodedToken);
+      userRepository.getById.mockResolvedValue(null);
+
+      await expect(customerAuthService.refreshToken('valid-token')).rejects.toThrow(
+        UnauthorizedError,
+      );
     });
   });
 });
