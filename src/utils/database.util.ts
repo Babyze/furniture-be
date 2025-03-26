@@ -8,6 +8,10 @@ const toCamelCase = (row: any) => {
   return newRow;
 };
 
+const toSnakeCase = (keys: string[]) => {
+  return keys.map((key) => key.replace(/([A-Z])/g, '_$1').toLowerCase());
+};
+
 const toDateStringToDate = (row: any) => {
   for (const [key, value] of Object.entries(row)) {
     if (typeof value === 'string' && value.match(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/g)) {
@@ -18,4 +22,4 @@ const toDateStringToDate = (row: any) => {
   return row;
 };
 
-export { toCamelCase, toDateStringToDate };
+export { toCamelCase, toSnakeCase, toDateStringToDate };

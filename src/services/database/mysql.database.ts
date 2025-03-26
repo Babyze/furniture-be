@@ -2,7 +2,7 @@
 import { IBaseModel } from '@src/models/base.model';
 import { IDatabase } from './base.databse';
 import mysqlPool from './pool/mysql.pool';
-import { toCamelCase, toDateStringToDate } from '@src/utils/database.utils';
+import { toCamelCase, toDateStringToDate, toSnakeCase } from '@src/utils/database.util';
 
 export class MysqlDatabase<T> implements IDatabase<T> {
   private tableName: string;
@@ -29,39 +29,38 @@ export class MysqlDatabase<T> implements IDatabase<T> {
     return results.length > 0 ? toDateStringToDate(toCamelCase(results[0])) : null;
   }
 
-  async insert(data: Partial<T>): Promise<T> {
-    const keys = Object.keys(data).join(', ');
+  async insert(data: Partial<T> & Pick<IBaseModel, 'id'>): Promise<T> {
+    const keys = toSnakeCase(Object.keys(data)).join(', ');
     const values = Object.values(data);
     const placeholders = values.map(() => '?').join(', ');
 
-    const [result] = await mysqlPool.query(
-      `INSERT INTO ${this.tableName} (${keys}) VALUES (${placeholders}) RETURNING *`,
+    await mysqlPool.query(
+      `INSERT INTO ${this.tableName} (${keys}) VALUES (${placeholders})`,
       values,
     );
+
+    const result = await this.getById(data.id);
 
     return toDateStringToDate(toCamelCase(result)) as T;
   }
 
   async update(id: IBaseModel['id'], data: Partial<T>): Promise<T> {
-    const updates = Object.keys(data)
+    const updates = toSnakeCase(Object.keys(data))
       .map((key) => `${key} = ?`)
       .join(', ');
 
     const values = [...Object.values(data), id];
 
-    const [result] = await mysqlPool.query(
-      `UPDATE ${this.tableName} SET ${updates} WHERE id = ? RETURNING *`,
-      values,
-    );
+    await mysqlPool.query(`UPDATE ${this.tableName} SET ${updates} WHERE id = ?`, values);
+
+    const result = await this.getById(id);
 
     return toDateStringToDate(toCamelCase(result)) as T;
   }
 
   async delete(id: IBaseModel['id']): Promise<T> {
-    const [result] = await mysqlPool.query(
-      `DELETE FROM ${this.tableName} WHERE id = ? RETURNING *`,
-      [id],
-    );
+    await mysqlPool.query(`DELETE FROM ${this.tableName} WHERE id = ?`, [id]);
+    const result = await this.getById(id);
     return toDateStringToDate(toCamelCase(result)) as T;
   }
 
