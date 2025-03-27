@@ -1,4 +1,4 @@
-import { RefreshTokenResponseDto } from '@src/dto/customer/auth/refresh-token.dto';
+import { CustomerRefreshTokenResponseDto } from '@src/dto/customer/auth/refresh-token.dto';
 import {
   CustomerSignInRequestDto,
   CustomerSignInResponseDto,
@@ -13,8 +13,8 @@ import { CustomerRepository } from '@src/repositories/customer.repository';
 import { comparePassword, hashPassword } from '@src/utils/password.util';
 import { generateUUID } from '@src/utils/uuid.util';
 import dayjs from 'dayjs';
-import { CustomerJwtService } from './jwt.service';
 import jwt from 'jsonwebtoken';
+import { CustomerJwtService } from './jwt.service';
 
 export class CustomerAuthService {
   private customerRepository: CustomerRepository;
@@ -86,7 +86,7 @@ export class CustomerAuthService {
     return new CustomerSignInResponseDto(accessToken, refreshToken);
   }
 
-  async refreshToken(refreshToken: string): Promise<RefreshTokenResponseDto> {
+  async refreshToken(refreshToken: string): Promise<CustomerRefreshTokenResponseDto> {
     try {
       const decoded = this.customerJwtService.verifyRefreshToken(refreshToken);
 

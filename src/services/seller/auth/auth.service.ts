@@ -4,6 +4,9 @@ import { UnauthorizedError } from '@src/errors/http.error';
 import { SellerRepository } from '@src/repositories/seller.repository';
 import { comparePassword } from '@src/utils/password.util';
 import { SellerJwtService } from './jwt.service';
+import { SellerRefreshTokenResponseDto } from '@src/dto/seller/auth/refresh-token.dto';
+import { SellerRefreshTokenRequestDto } from '@src/dto/seller/auth/refresh-token.dto';
+import jwt from 'jsonwebtoken';
 
 export class SellerAuthService {
   private sellerRepository: SellerRepository;
@@ -37,5 +40,34 @@ export class SellerAuthService {
     });
 
     return new SellerSignInResponseDto(accessToken, refreshToken);
+  }
+
+  async refreshToken(
+    payload: SellerRefreshTokenRequestDto,
+  ): Promise<SellerRefreshTokenResponseDto> {
+    try {
+      const decoded = this.sellerJwtService.verifyRefreshToken(payload.refreshToken);
+
+      const user = await this.sellerRepository.getById(decoded.id);
+
+      if (!user) {
+        throw new UnauthorizedError('Invalid refresh token');
+      }
+
+      const newAccessToken = this.sellerJwtService.generateTokenPair({
+        id: user.id,
+        email: user.email,
+      });
+
+      return {
+        accessToken: newAccessToken.accessToken,
+        refreshToken: payload.refreshToken,
+      };
+    } catch (error) {
+      if (error instanceof jwt.JsonWebTokenError) {
+        throw new UnauthorizedError('Invalid refresh token');
+      }
+      throw error;
+    }
   }
 }
