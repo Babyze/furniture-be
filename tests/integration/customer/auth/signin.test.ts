@@ -2,8 +2,8 @@ import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
 import { HTTP_STATUS } from '@src/constant/http-status.constant';
 import { UnauthorizedError } from '@src/errors/http.error';
 import { CustomerAuthService } from '@src/services/customer/auth/auth.service';
-import request from 'supertest';
 import app from '@src/server';
+import request from 'supertest';
 
 jest.mock('@src/services/customer/auth/auth.service');
 

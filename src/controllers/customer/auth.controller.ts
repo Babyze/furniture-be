@@ -1,4 +1,5 @@
 import { HTTP_STATUS } from '@src/constant/http-status.constant';
+import { CustomerRefreshTokenRequestDto } from '@src/dto/customer/auth/refresh-token.dto';
 import { CustomerSignInRequestDto } from '@src/dto/customer/auth/signin.dto';
 import { CustomerSignUpRequestDto } from '@src/dto/customer/auth/signup.dto';
 import { CustomerAuthService } from '@src/services/customer/auth/auth.service';
@@ -33,7 +34,11 @@ export class CustomerAuthController {
     }
   };
 
-  async refreshToken(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async refreshToken(
+    req: Request<object, object, CustomerRefreshTokenRequestDto>,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       const { refreshToken } = req.body;
       const result = await this.customerAuthService.refreshToken(refreshToken);
