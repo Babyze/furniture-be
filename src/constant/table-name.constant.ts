@@ -1,4 +1,16 @@
 export const TABLE_NAME = {
   CUSTOMER_TABLE: 'customer',
   SELLER_TABLE: 'seller',
+  CATEGORY_AREA_TABLE: 'category_area',
+  CATEGORY_TABLE: 'category',
+  PRODUCT_TABLE: 'product',
+  PRODUCT_CATEGORY_AREA_TABLE: 'product_category_area',
+  SKU_TABLE: 'sku',
+  SPU_TABLE: 'spu',
+  SPU_ATTRIBUTE_TABLE: 'spu_attribute',
+  ORDERS_TABLE: 'orders',
+  ORDER_ITEM_TABLE: 'order_item',
+  CART_TABLE: 'cart',
+  CART_ITEM_TABLE: 'cart_item',
+  PRODUCT_IMAGE_TABLE: 'product_image',
 };
