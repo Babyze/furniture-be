@@ -13,7 +13,6 @@ export class SellerAuthController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      console.log(this.sellerAuthService);
       const result = await this.sellerAuthService.signIn(req.body);
       res.status(HTTP_STATUS.OK).json(result);
     } catch (error) {

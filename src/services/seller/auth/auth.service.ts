@@ -7,6 +7,7 @@ import { SellerJwtService } from './jwt.service';
 import { SellerRefreshTokenResponseDto } from '@src/dto/seller/auth/refresh-token.dto';
 import { SellerRefreshTokenRequestDto } from '@src/dto/seller/auth/refresh-token.dto';
 import jwt from 'jsonwebtoken';
+import lodash from 'lodash';
 
 export class SellerAuthService {
   private sellerRepository: SellerRepository;
@@ -19,7 +20,7 @@ export class SellerAuthService {
 
   async signIn(signInDto: SellerSignInRequestDto): Promise<SellerSignInResponseDto> {
     const users = await this.sellerRepository.query(
-      `SELECT * FROM ${TABLE_NAME.CUSTOMER_TABLE} WHERE email = ?`,
+      `SELECT * FROM ${TABLE_NAME.SELLER_TABLE} WHERE email = ?`,
       [signInDto.email],
     );
 
@@ -39,7 +40,11 @@ export class SellerAuthService {
       email: user.email,
     });
 
-    return new SellerSignInResponseDto(accessToken, refreshToken);
+    return new SellerSignInResponseDto(
+      accessToken,
+      refreshToken,
+      lodash.pick(user, ['id', 'email', 'fullName']),
+    );
   }
 
   async refreshToken(
