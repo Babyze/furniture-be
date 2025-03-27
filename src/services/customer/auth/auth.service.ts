@@ -8,22 +8,25 @@ import {
   CustomerSignUpResponseDto,
 } from '@src/dto/customer/auth/signup.dto';
 import { ConflictError, UnauthorizedError } from '@src/errors/http.error';
-import { User } from '@src/models/user.model';
-import { UserRepository } from '@src/repositories/user.repository';
-import { generateTokenPair, verifyRefreshToken } from '@src/utils/jwt.util';
+import { Customer } from '@src/models/customer.model';
+import { CustomerRepository } from '@src/repositories/customer.repository';
 import { comparePassword, hashPassword } from '@src/utils/password.util';
 import { generateUUID } from '@src/utils/uuid.util';
+import dayjs from 'dayjs';
+import { CustomerJwtService } from './jwt.service';
 import jwt from 'jsonwebtoken';
 
 export class CustomerAuthService {
-  private userRepository: UserRepository;
+  private customerRepository: CustomerRepository;
+  private customerJwtService: CustomerJwtService;
 
-  constructor() {
-    this.userRepository = new UserRepository();
+  constructor(customerRepository: CustomerRepository, customerJwtService: CustomerJwtService) {
+    this.customerRepository = customerRepository;
+    this.customerJwtService = customerJwtService;
   }
 
   async signUp(signUpDto: CustomerSignUpRequestDto): Promise<CustomerSignUpResponseDto> {
-    const users = await this.userRepository.query(
+    const users = await this.customerRepository.query(
       'SELECT * FROM user WHERE email = ? OR username = ?',
       [signUpDto.email, signUpDto.username],
     );
@@ -34,19 +37,19 @@ export class CustomerAuthService {
 
     const hashedPassword = await hashPassword(signUpDto.password);
 
-    const newUser: User = {
+    const newUser: Customer = {
       id: generateUUID(),
       email: signUpDto.email,
       password: hashedPassword,
       fullName: signUpDto.fullName,
       isAgreeAllPolicy: true,
-      createdDate: new Date(),
-      updatedDate: new Date(),
+      createdDate: dayjs(),
+      updatedDate: dayjs(),
     };
 
-    const createdUser = await this.userRepository.insert(newUser);
+    const createdUser = await this.customerRepository.insert(newUser);
 
-    const { accessToken, refreshToken } = generateTokenPair({
+    const { accessToken, refreshToken } = this.customerJwtService.generateTokenPair({
       id: createdUser.id,
       email: createdUser.email,
     });
@@ -60,7 +63,7 @@ export class CustomerAuthService {
   }
 
   async signIn(signInDto: CustomerSignInRequestDto): Promise<CustomerSignInResponseDto> {
-    const users = await this.userRepository.query('SELECT * FROM user WHERE email = ?', [
+    const users = await this.customerRepository.query('SELECT * FROM user WHERE email = ?', [
       signInDto.email,
     ]);
 
@@ -75,7 +78,7 @@ export class CustomerAuthService {
       throw new UnauthorizedError('Invalid login information');
     }
 
-    const { accessToken, refreshToken } = generateTokenPair({
+    const { accessToken, refreshToken } = this.customerJwtService.generateTokenPair({
       id: user.id,
       email: user.email,
     });
@@ -85,15 +88,15 @@ export class CustomerAuthService {
 
   async refreshToken(refreshToken: string): Promise<RefreshTokenResponseDto> {
     try {
-      const decoded = verifyRefreshToken(refreshToken);
+      const decoded = this.customerJwtService.verifyRefreshToken(refreshToken);
 
-      const user = await this.userRepository.getById(decoded.id);
+      const user = await this.customerRepository.getById(decoded.id);
 
       if (!user) {
         throw new UnauthorizedError('Invalid refresh token');
       }
 
-      const newAccessToken = generateTokenPair({
+      const newAccessToken = this.customerJwtService.generateTokenPair({
         id: user.id,
         email: user.email,
       });

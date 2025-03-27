@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IBaseModel } from '@src/models/base.model';
-import { IDatabase } from './base.databse';
+import { IDatabase } from './base.database';
 import mysqlPool from './pool/mysql.pool';
-import { toCamelCase, toDateStringToDate, toSnakeCase } from '@src/utils/database.util';
+import { toCamelCase, convertDateStringToDate, toSnakeCase } from '@src/utils/database.util';
 
 export class MysqlDatabase<T> implements IDatabase<T> {
   private tableName: string;
@@ -15,7 +15,7 @@ export class MysqlDatabase<T> implements IDatabase<T> {
     const [rows] = await mysqlPool.query(sql, params);
     return (rows as T[]).map((record) => {
       record = toCamelCase(record);
-      record = toDateStringToDate(record);
+      record = convertDateStringToDate(record);
       return record;
     });
   }
@@ -26,7 +26,7 @@ export class MysqlDatabase<T> implements IDatabase<T> {
 
   async getById(id: IBaseModel['id']): Promise<T | null> {
     const results = await this.query(`SELECT * FROM ${this.tableName} WHERE id = ?`, [id]);
-    return results.length > 0 ? toDateStringToDate(toCamelCase(results[0])) : null;
+    return results.length > 0 ? convertDateStringToDate(toCamelCase(results[0])) : null;
   }
 
   async insert(data: Partial<T> & Pick<IBaseModel, 'id'>): Promise<T> {
@@ -41,7 +41,7 @@ export class MysqlDatabase<T> implements IDatabase<T> {
 
     const result = await this.getById(data.id);
 
-    return toDateStringToDate(toCamelCase(result)) as T;
+    return convertDateStringToDate(toCamelCase(result)) as T;
   }
 
   async update(id: IBaseModel['id'], data: Partial<T>): Promise<T> {
@@ -55,13 +55,13 @@ export class MysqlDatabase<T> implements IDatabase<T> {
 
     const result = await this.getById(id);
 
-    return toDateStringToDate(toCamelCase(result)) as T;
+    return convertDateStringToDate(toCamelCase(result)) as T;
   }
 
   async delete(id: IBaseModel['id']): Promise<T> {
     await mysqlPool.query(`DELETE FROM ${this.tableName} WHERE id = ?`, [id]);
     const result = await this.getById(id);
-    return toDateStringToDate(toCamelCase(result)) as T;
+    return convertDateStringToDate(toCamelCase(result)) as T;
   }
 
   async transaction(queries: { sql: string; params: any[] }[]): Promise<boolean> {

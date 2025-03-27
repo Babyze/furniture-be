@@ -1,3 +1,4 @@
 export const TABLE_NAME = {
-  USER_TABLE: 'user',
+  CUSTOMER_TABLE: 'customer',
+  SELLER_TABLE: 'seller',
 };

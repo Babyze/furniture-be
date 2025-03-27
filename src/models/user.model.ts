@@ -4,5 +4,4 @@ export interface User extends IBaseModel {
   email: string;
   password: string;
   fullName: string;
-  isAgreeAllPolicy: boolean;
 }

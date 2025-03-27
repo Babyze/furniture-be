@@ -5,8 +5,9 @@ import app from '@src/server';
 import { CustomerAuthService } from '@src/services/customer/auth/auth.service';
 import request from 'supertest';
 
-jest.mock('@src/repositories/user.repository');
+jest.mock('@src/repositories/customer.repository');
 jest.mock('@src/services/customer/auth/auth.service');
+
 describe('Customer Auth API', () => {
   beforeAll(() => {
     (CustomerAuthService.prototype.signUp as jest.Mock).mockImplementation(async () => ({

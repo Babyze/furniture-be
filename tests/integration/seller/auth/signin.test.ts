@@ -1,15 +1,15 @@
 import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
 import { HTTP_STATUS } from '@src/constant/http-status.constant';
 import { UnauthorizedError } from '@src/errors/http.error';
-import { CustomerAuthService } from '@src/services/customer/auth/auth.service';
 import request from 'supertest';
 import app from '@src/server';
+import { SellerAuthService } from '@src/services/seller/auth/auth.service';
 
-jest.mock('@src/services/customer/auth/auth.service');
+jest.mock('@src/services/seller/auth/auth.service');
 
-describe('Customer Auth API', () => {
+describe('Seller Auth API', () => {
   beforeAll(() => {
-    (CustomerAuthService.prototype.signIn as jest.Mock).mockImplementation(async () => ({
+    (SellerAuthService.prototype.signIn as jest.Mock).mockImplementation(async () => ({
       accessToken: 'mock-access-token',
       refreshToken: 'mock-refresh-token',
     }));
@@ -19,7 +19,7 @@ describe('Customer Auth API', () => {
     jest.clearAllMocks();
   });
 
-  describe('POST /api/customer/auth/signin', () => {
+  describe('POST /api/seller/auth/signin', () => {
     const validSignInData = {
       email: 'test@example.com',
       password: 'password123',
@@ -27,7 +27,7 @@ describe('Customer Auth API', () => {
 
     it('should return tokens when credentials are valid', async () => {
       const response = await request(app)
-        .post('/api/customer/auth/signin')
+        .post('/api/seller/auth/signin')
         .send(validSignInData)
         .expect(HTTP_STATUS.OK);
 
@@ -41,12 +41,12 @@ describe('Customer Auth API', () => {
     });
 
     it('should return unauthorized when credentials are invalid', async () => {
-      (CustomerAuthService.prototype.signIn as jest.Mock).mockRejectedValueOnce(
+      (SellerAuthService.prototype.signIn as jest.Mock).mockRejectedValueOnce(
         new UnauthorizedError('Invalid login information') as unknown as never,
       );
 
       const response = await request(app)
-        .post('/api/customer/auth/signin')
+        .post('/api/seller/auth/signin')
         .send(validSignInData)
         .expect(HTTP_STATUS.UNAUTHORIZED);
 
