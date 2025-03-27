@@ -1,3 +1,41 @@
+import { TABLE_NAME } from '@src/constant/table-name.constant';
+import { SellerSignInRequestDto, SellerSignInResponseDto } from '@src/dto/seller/auth/signin.dto';
+import { UnauthorizedError } from '@src/errors/http.error';
+import { SellerRepository } from '@src/repositories/seller.repository';
+import { comparePassword } from '@src/utils/password.util';
+import { SellerJwtService } from './jwt.service';
+
 export class SellerAuthService {
-  constructor() {}
+  private sellerRepository: SellerRepository;
+  private sellerJwtService: SellerJwtService;
+
+  constructor(sellerRepository: SellerRepository, sellerJwtService: SellerJwtService) {
+    this.sellerRepository = sellerRepository;
+    this.sellerJwtService = sellerJwtService;
+  }
+
+  async signIn(signInDto: SellerSignInRequestDto): Promise<SellerSignInResponseDto> {
+    const users = await this.sellerRepository.query(
+      `SELECT * FROM ${TABLE_NAME.CUSTOMER_TABLE} WHERE email = ?`,
+      [signInDto.email],
+    );
+
+    if (users.length === 0) {
+      throw new UnauthorizedError('Invalid login information');
+    }
+
+    const user = users[0];
+    const isPasswordValid = await comparePassword(signInDto.password, user.password);
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedError('Invalid login information');
+    }
+
+    const { accessToken, refreshToken } = this.sellerJwtService.generateTokenPair({
+      id: user.id,
+      email: user.email,
+    });
+
+    return new SellerSignInResponseDto(accessToken, refreshToken);
+  }
 }

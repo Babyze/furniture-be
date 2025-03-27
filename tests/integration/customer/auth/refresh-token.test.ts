@@ -2,13 +2,14 @@ import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { UnauthorizedError } from '@src/errors/http.error';
 import app from '@src/server';
 import { CustomerAuthService } from '@src/services/customer/auth/auth.service';
-import { generateTokenPair } from '@src/utils/jwt.util';
+import { CustomerJwtService } from '@src/services/customer/auth/jwt.service';
 import supertest from 'supertest';
 
 jest.mock('@src/services/customer/auth/auth.service');
-jest.mock('@src/repositories/user.repository');
+jest.mock('@src/repositories/customer.repository');
 
 describe('POST /api/customer/auth/refresh-token', () => {
+  let customerJwtService: CustomerJwtService;
   const request = supertest(app);
   const mockUser = {
     id: '123',
@@ -17,10 +18,11 @@ describe('POST /api/customer/auth/refresh-token', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    customerJwtService = new CustomerJwtService();
   });
 
   it('should return new access token when refresh token is valid', async () => {
-    const { refreshToken } = generateTokenPair(mockUser);
+    const { refreshToken } = customerJwtService.generateTokenPair(mockUser);
     const mockResponse = {
       accessToken: 'new-access-token',
       refreshToken: 'new-refresh-token',
