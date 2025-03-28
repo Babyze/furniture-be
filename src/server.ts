@@ -24,6 +24,8 @@ app.use(express.urlencoded({ extended: true }));
 
 // Response handler
 app.use(responseHandler);
+// For serving get files
+app.use(`/${env.FILE_UPLOAD_DIR}`, express.static(env.FILE_UPLOAD_DIR));
 
 // Routes
 app.use('/api/customer', customerRoute);

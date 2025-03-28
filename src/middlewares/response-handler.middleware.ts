@@ -52,7 +52,9 @@ export const responseHandler = (
 
     return originalJson.call(this, {
       success: true,
-      data: body,
+      data: body ?? {
+        message: 'success',
+      },
     });
   };
   next();

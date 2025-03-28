@@ -17,19 +17,19 @@ const customerAuthController = new CustomerAuthController(customerAuthService);
 
 router.post(
   CUSTOMER_ROUTE_NAME.AUTH.SIGN_UP,
-  validateRequest(CustomerSignUpRequestDto),
+  validateRequest({ body: CustomerSignUpRequestDto }),
   customerAuthController.signUp.bind(customerAuthController),
 );
 
 router.post(
   CUSTOMER_ROUTE_NAME.AUTH.SIGN_IN,
-  validateRequest(CustomerSignInRequestDto),
+  validateRequest({ body: CustomerSignInRequestDto }),
   customerAuthController.signIn.bind(customerAuthController),
 );
 
 router.post(
   CUSTOMER_ROUTE_NAME.AUTH.REFRESH_TOKEN,
-  validateRequest(CustomerRefreshTokenRequestDto),
+  validateRequest({ body: CustomerRefreshTokenRequestDto }),
   customerAuthController.refreshToken.bind(customerAuthController),
 );
 
