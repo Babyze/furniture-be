@@ -34,14 +34,14 @@ export class MysqlDatabase<T> implements IDatabase<T> {
     const values = Object.values(data);
     const placeholders = values.map(() => '?').join(', ');
 
-    await mysqlPool.query(
+    const [result] = await mysqlPool.query(
       `INSERT INTO ${this.tableName} (${keys}) VALUES (${placeholders})`,
       values,
     );
 
-    const result = await this.getById(data.id);
+    const insertedData = await this.getById((result as any).insertId);
 
-    return convertDateStringToDate(toCamelCase(result)) as T;
+    return convertDateStringToDate(toCamelCase(insertedData)) as T;
   }
 
   async update(id: IBaseModel['id'], data: Partial<T>): Promise<T> {

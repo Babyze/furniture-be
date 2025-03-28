@@ -37,6 +37,7 @@
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "mysql2": "^3.14.0",
+    "reflect-metadata": "^0.2.2",
     "tsx": "^4.19.3",
     "uuid": "^11.1.0"
   },

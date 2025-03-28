@@ -4,8 +4,8 @@ CREATE TABLE customer (
   password VARCHAR(255) NOT NULL,
   full_name VARCHAR(255) DEFAULT NULL,
   is_agree_all_policy TINYINT(1) DEFAULT '1',
-  created_date DATETIME DEFAULT NULL,
-  updated_date DATETIME DEFAULT NULL,
+  created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY email (email)
 );
 
@@ -14,35 +14,34 @@ CREATE TABLE seller (
   email VARCHAR(255) NOT NULL,
   password VARCHAR(255) NOT NULL,
   full_name VARCHAR(255) DEFAULT NULL,
-  created_date DATETIME DEFAULT NULL,
-  updated_date DATETIME DEFAULT NULL,
+  created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY email (email)
 );
 
 CREATE TABLE category_area (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
-  created_date DATETIME DEFAULT NULL,
-  updated_date DATETIME DEFAULT NULL
+  created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE category (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
-  created_date DATETIME DEFAULT NULL,
-  updated_date DATETIME DEFAULT NULL
+  created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE product (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
   description TEXT,
-  price DECIMAL(10, 2) NOT NULL,
   measurements VARCHAR(255),
   seller_id INT NOT NULL,
   category_id INT NOT NULL,
-  created_date DATETIME DEFAULT NULL,
-  updated_date DATETIME DEFAULT NULL,
+  created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (seller_id) REFERENCES seller(id),
   FOREIGN KEY (category_id) REFERENCES category(id)
 );
@@ -59,8 +58,8 @@ CREATE TABLE spu (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
   product_id INT NOT NULL,
-  created_date DATETIME DEFAULT NULL,
-  updated_date DATETIME DEFAULT NULL,
+  created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (product_id) REFERENCES product(id)
 );
 
@@ -69,8 +68,8 @@ CREATE TABLE sku (
   price DECIMAL(10, 2) NOT NULL,
   quantity INT NOT NULL,
   spu_id INT NOT NULL,
-  created_date DATETIME DEFAULT NULL,
-  updated_date DATETIME DEFAULT NULL,
+  created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (spu_id) REFERENCES spu(id)
 );
 
@@ -79,8 +78,8 @@ CREATE TABLE spu_attribute (
   spu_id INT NOT NULL,
   attribute_name VARCHAR(255) NOT NULL,
   attribute_value VARCHAR(255) NOT NULL,
-  created_date DATETIME DEFAULT NULL,
-  updated_date DATETIME DEFAULT NULL,
+  created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (spu_id) REFERENCES spu(id)
 );
 
@@ -89,8 +88,8 @@ CREATE TABLE orders (
   customer_id INT NOT NULL,
   total_price DECIMAL(10, 2) NOT NULL,
   status ENUM('pending', 'confirmed', 'shipped', 'cancelled') NOT NULL DEFAULT 'pending',
-  created_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-  updated_date DATETIME DEFAULT NULL,
+  created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (customer_id) REFERENCES customer(id)
 );
 
@@ -107,8 +106,8 @@ CREATE TABLE order_item (
 CREATE TABLE cart (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   customer_id INT NOT NULL,
-  created_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-  updated_date DATETIME DEFAULT NULL,
+  created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (customer_id) REFERENCES customer(id)
 );
 
