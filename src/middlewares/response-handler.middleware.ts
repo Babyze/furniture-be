@@ -17,9 +17,8 @@ export const errorHandler = (
   res: Response<ApiResponse>,
   _next: NextFunction,
 ): void => {
-  console.error(
-    `ERROR - ${dayjs().format('YYYY-MM-DD HH:mm:ss')} "${req.method} ${req.path}": \n ${err.message}`,
-  );
+  console.error(`ERROR - ${dayjs().format('YYYY-MM-DD HH:mm:ss')} "${req.method} ${req.path}"`);
+  console.error(err);
 
   if (err instanceof HttpError) {
     res.status(err.statusCode).json({

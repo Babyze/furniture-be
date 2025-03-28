@@ -3,7 +3,7 @@ import { ProductImageController } from '@src/controllers/seller/product-image.co
 import { ProductController } from '@src/controllers/seller/product.controller';
 import { CreateProductDto } from '@src/dto/seller/product/create-product.dto';
 import { UploadProductImageRequestParamsDto } from '@src/dto/seller/product/upload-product-image.dto';
-import { upload } from '@src/middlewares/upload.middleware';
+import { GetProductsDto } from '@src/dto/seller/product/get-products.dto';
 import { validateRequest } from '@src/middlewares/validate-request.middleware';
 import { CategoryAreaRepository } from '@src/repositories/category-area.repository';
 import { ProductImageRepository } from '@src/repositories/product-image.repository';
@@ -14,6 +14,7 @@ import { SPURepository } from '@src/repositories/spu.repository';
 import { ProductImageService } from '@src/services/seller/product-image.service';
 import { ProductService } from '@src/services/seller/product.service';
 import { Router } from 'express';
+import { upload } from '@src/middlewares/upload.middleware';
 
 const router = Router();
 
@@ -48,6 +49,12 @@ router.put(
   validateRequest({ params: UploadProductImageRequestParamsDto }),
   upload.single('image'),
   productImageController.uploadProductImage.bind(productImageController),
+);
+
+router.get(
+  SELLER_ROUTE_NAME.PRODUCT.GET,
+  validateRequest({ query: GetProductsDto }),
+  productController.getProducts.bind(productController),
 );
 
 export default router;

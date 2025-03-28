@@ -3,13 +3,16 @@ import {
   CreateProductDto,
   CreateProductResponseDto,
 } from '@src/dto/seller/product/create-product.dto';
+import { GetProductsDto } from '@src/dto/seller/product/get-products.dto';
 import { BadRequestError } from '@src/errors/http.error';
 import { CategoryAreaRepository } from '@src/repositories/category-area.repository';
 import { ProductRepository } from '@src/repositories/product.repository';
 import { SKURepository } from '@src/repositories/sku.repository';
 import { SPUAttributeRepository } from '@src/repositories/spu-attribute.repository';
 import { SPURepository } from '@src/repositories/spu.repository';
+import { Product } from '@src/models/product.model';
 import mysqlPool from '../database/pool/mysql.pool';
+import { PaginationResult } from '@src/dto/common/pagination.dto';
 
 export class ProductService {
   constructor(
@@ -106,5 +109,12 @@ export class ProductService {
     } finally {
       connection.release();
     }
+  }
+
+  async getProducts(
+    sellerId: number,
+    getProductsDto: GetProductsDto,
+  ): Promise<PaginationResult<Product>> {
+    return this.productRepository.getProducts(sellerId, getProductsDto);
   }
 }

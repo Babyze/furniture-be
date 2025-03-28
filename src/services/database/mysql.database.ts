@@ -87,30 +87,27 @@ export class MysqlDatabase<T> implements IDatabase<T> {
     }
   }
 
-  async getTotalItems(whereClause?: string, params: unknown[] = []): Promise<number> {
-    const query = `SELECT COUNT(*) as total FROM ${this.tableName} ${whereClause || ''}`;
+  async getTotalItems(sql: string[], params: unknown[] = []): Promise<number> {
+    const query = `SELECT COUNT(*) as total FROM (${sql.join(' ')}) as temp `;
     const [result] = await this.query(query, params);
     return (result as { total: number }).total;
   }
 
   async getPaginatedItems(
     paginationDto: PaginationDto,
-    whereClause?: string,
+    sql: string[],
     params: unknown[] = [],
-    orderBy: string = 'id DESC',
   ): Promise<T[]> {
     const { page = 1, limit = 10 } = paginationDto;
     const offset = getOffset(page, limit);
 
     const query = `
-          SELECT * FROM ${this.tableName}
-          ${whereClause || ''}
-          ORDER BY ${orderBy}
+          SELECT * FROM (${sql.join(' ')}) as temp
           LIMIT ? OFFSET ?
         `;
 
-    const [items] = await this.query(query, [...params, limit, offset]);
-    return items as T[];
+    const items = await this.query(query, [...params, limit, offset]);
+    return items;
   }
 
   async paginate(
