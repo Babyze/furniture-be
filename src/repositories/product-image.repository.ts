@@ -1,5 +1,5 @@
 import { ProductImage } from '@src/models/product-image.model';
-import { BaseRepository } from './base.repository';
+import { BaseRepository } from './base/base.repository';
 import { TABLE_NAME } from '@src/constant/table-name.constant';
 
 export class ProductImageRepository extends BaseRepository<ProductImage> {
