@@ -1,5 +1,8 @@
 import { TABLE_NAME } from '@src/constant/table-name.constant';
-import { CreateProductDto } from '@src/dto/seller/product/create-product.dto';
+import {
+  CreateProductDto,
+  CreateProductResponseDto,
+} from '@src/dto/seller/product/create-product.dto';
 import { BadRequestError } from '@src/errors/http.error';
 import { CategoryAreaRepository } from '@src/repositories/category-area.repository';
 import { ProductRepository } from '@src/repositories/product.repository';
@@ -17,7 +20,10 @@ export class ProductService {
     private readonly categoryAreaRepository: CategoryAreaRepository,
   ) {}
 
-  async createProduct(sellerId: number, createProductDto: CreateProductDto): Promise<number> {
+  async createProduct(
+    sellerId: number,
+    createProductDto: CreateProductDto,
+  ): Promise<CreateProductResponseDto> {
     const connection = await mysqlPool.getConnection();
     try {
       await connection.beginTransaction();
@@ -90,7 +96,9 @@ export class ProductService {
       }
 
       await connection.commit();
-      return productId;
+      return {
+        productId,
+      };
     } catch (error) {
       console.log(error);
       await connection.rollback();

@@ -72,3 +72,7 @@ export class CreateProductDto {
   @IsNotEmpty()
   spus!: CreateSPUDto[];
 }
+
+export class CreateProductResponseDto {
+  constructor(public readonly productId: number) {}
+}

@@ -14,13 +14,11 @@ export class ProductController {
     try {
       const sellerId = req.user?.id;
 
-      const productId = await this.productService.createProduct(
+      const product = await this.productService.createProduct(
         sellerId,
         req.body as CreateProductDto,
       );
-      res.status(HTTP_STATUS.CREATED).json({
-        productId,
-      });
+      res.status(HTTP_STATUS.CREATED).json(product);
     } catch (error) {
       next(error);
     }
