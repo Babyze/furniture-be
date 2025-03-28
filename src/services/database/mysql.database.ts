@@ -3,9 +3,12 @@ import { IBaseModel } from '@src/models/base.model';
 import { IDatabase } from './base.database';
 import mysqlPool from './pool/mysql.pool';
 import { toCamelCase, convertDateStringToDate, toSnakeCase } from '@src/utils/database.util';
+import { PaginationResult } from '@src/dto/common/pagination.dto';
+import { PaginationDto } from '@src/dto/common/pagination.dto';
+import { getOffset, paginate } from '@src/utils/pagination.util';
 
 export class MysqlDatabase<T> implements IDatabase<T> {
-  private tableName: string;
+  protected tableName: string;
 
   constructor(tableName: string) {
     this.tableName = tableName;
@@ -82,5 +85,39 @@ export class MysqlDatabase<T> implements IDatabase<T> {
     } finally {
       connection.release();
     }
+  }
+
+  async getTotalItems(whereClause?: string, params: unknown[] = []): Promise<number> {
+    const query = `SELECT COUNT(*) as total FROM ${this.tableName} ${whereClause || ''}`;
+    const [result] = await this.query(query, params);
+    return (result as { total: number }).total;
+  }
+
+  async getPaginatedItems(
+    paginationDto: PaginationDto,
+    whereClause?: string,
+    params: unknown[] = [],
+    orderBy: string = 'id DESC',
+  ): Promise<T[]> {
+    const { page = 1, limit = 10 } = paginationDto;
+    const offset = getOffset(page, limit);
+
+    const query = `
+          SELECT * FROM ${this.tableName}
+          ${whereClause || ''}
+          ORDER BY ${orderBy}
+          LIMIT ? OFFSET ?
+        `;
+
+    const [items] = await this.query(query, [...params, limit, offset]);
+    return items as T[];
+  }
+
+  async paginate(
+    items: T[],
+    totalItems: number,
+    paginationDto: PaginationDto,
+  ): Promise<PaginationResult<T>> {
+    return paginate(items, totalItems, paginationDto);
   }
 }
