@@ -3,16 +3,17 @@ import {
   CreateProductDto,
   CreateProductResponseDto,
 } from '@src/dto/seller/product/create-product.dto';
-import { GetProductsDto } from '@src/dto/seller/product/get-products.dto';
+import {
+  GetProductsRequestQueryDto,
+  GetProductsResponseDto,
+} from '@src/dto/seller/product/get-products.dto';
 import { BadRequestError } from '@src/errors/http.error';
 import { CategoryAreaRepository } from '@src/repositories/category-area.repository';
 import { ProductRepository } from '@src/repositories/product.repository';
 import { SKURepository } from '@src/repositories/sku.repository';
 import { SPUAttributeRepository } from '@src/repositories/spu-attribute.repository';
 import { SPURepository } from '@src/repositories/spu.repository';
-import { Product } from '@src/models/product.model';
 import mysqlPool from '../database/pool/mysql.pool';
-import { PaginationResult } from '@src/dto/common/pagination.dto';
 
 export class ProductService {
   constructor(
@@ -34,32 +35,21 @@ export class ProductService {
       // 1. Create product
       const [productResult] = await connection.query(
         `INSERT INTO ${TABLE_NAME.PRODUCT_TABLE} 
-        (name, description, measurements, category_id, seller_id) 
-        VALUES (?, ?, ?, ?, ?)`,
+        (name, description, measurements, category_id, category_area_id, seller_id) 
+        VALUES (?, ?, ?, ?, ?, ?)`,
         [
           createProductDto.name,
           createProductDto.description,
           createProductDto.measurements,
           createProductDto.categoryId,
+          createProductDto.categoryAreaId,
           sellerId,
         ],
       );
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const productId = (productResult as any).insertId;
 
-      // 2. Create product category areas
-      const productCategoryAreaValues = createProductDto.categoryAreaIds.map((categoryAreaId) => ({
-        productId: productId,
-        categoryAreaId: categoryAreaId,
-      }));
-      await connection.query(
-        `INSERT INTO ${TABLE_NAME.PRODUCT_CATEGORY_AREA_TABLE} 
-        (product_id, category_area_id) 
-        VALUES ?`,
-        [productCategoryAreaValues.map((v) => [v.productId, v.categoryAreaId])],
-      );
-
-      // 3. Create SPUs, SKUs and SPU Attributes
+      // 2. Create SPUs, SKUs and SPU Attributes
       for (const spuDto of createProductDto.spus) {
         // Create SPU
         const [spuResult] = await connection.query(
@@ -113,8 +103,8 @@ export class ProductService {
 
   async getProducts(
     sellerId: number,
-    getProductsDto: GetProductsDto,
-  ): Promise<PaginationResult<Product>> {
+    getProductsDto: GetProductsRequestQueryDto,
+  ): Promise<GetProductsResponseDto> {
     return this.productRepository.getProducts(sellerId, getProductsDto);
   }
 }

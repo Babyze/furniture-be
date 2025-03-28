@@ -40,17 +40,11 @@ CREATE TABLE product (
   measurements VARCHAR(255),
   seller_id INT NOT NULL,
   category_id INT NOT NULL,
+  category_area_id INT NOT NULL,
   created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (seller_id) REFERENCES seller(id),
-  FOREIGN KEY (category_id) REFERENCES category(id)
-);
-
-CREATE TABLE product_category_area (
-  product_id INT NOT NULL,
-  category_area_id INT NOT NULL,
-  PRIMARY KEY (product_id, category_area_id),
-  FOREIGN KEY (product_id) REFERENCES product(id),
+  FOREIGN KEY (category_id) REFERENCES category(id),
   FOREIGN KEY (category_area_id) REFERENCES category_area(id)
 );
 

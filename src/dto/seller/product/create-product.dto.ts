@@ -61,10 +61,9 @@ export class CreateProductDto {
   @IsNotEmpty()
   categoryId!: number;
 
-  @IsArray()
-  @IsNumber({}, { each: true })
+  @IsNumber()
   @IsNotEmpty()
-  categoryAreaIds!: number[];
+  categoryAreaId!: number;
 
   @IsArray()
   @ValidateNested({ each: true })

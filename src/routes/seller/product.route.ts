@@ -3,7 +3,7 @@ import { ProductImageController } from '@src/controllers/seller/product-image.co
 import { ProductController } from '@src/controllers/seller/product.controller';
 import { CreateProductDto } from '@src/dto/seller/product/create-product.dto';
 import { UploadProductImageRequestParamsDto } from '@src/dto/seller/product/upload-product-image.dto';
-import { GetProductsDto } from '@src/dto/seller/product/get-products.dto';
+import { GetProductsRequestQueryDto } from '@src/dto/seller/product/get-products.dto';
 import { validateRequest } from '@src/middlewares/validate-request.middleware';
 import { CategoryAreaRepository } from '@src/repositories/category-area.repository';
 import { ProductImageRepository } from '@src/repositories/product-image.repository';
@@ -53,7 +53,7 @@ router.put(
 
 router.get(
   SELLER_ROUTE_NAME.PRODUCT.GET,
-  validateRequest({ query: GetProductsDto }),
+  validateRequest({ query: GetProductsRequestQueryDto }),
   productController.getProducts.bind(productController),
 );
 
