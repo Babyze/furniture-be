@@ -1,3 +1,7 @@
+// Reflect Metadata for class-transformer
+import 'reflect-metadata';
+
+// Other imports
 import { env } from '@src/config/env.config';
 import { errorHandler, responseHandler } from '@src/middlewares/response-handler.middleware';
 import customerRoute from '@src/routes/customer/route';
