@@ -12,13 +12,8 @@ export interface IDatabase<T> {
   update(id: IBaseModel['id'], data: Partial<T>): Promise<T>;
   delete(id: IBaseModel['id']): Promise<T>;
   transaction(queries: { sql: string; params: any[] }[]): Promise<boolean>;
-  getTotalItems(whereClause?: string, params?: any[]): Promise<number>;
-  getPaginatedItems(
-    paginationDto: PaginationDto,
-    whereClause?: string,
-    params?: unknown[],
-    orderBy?: string,
-  ): Promise<T[]>;
+  getTotalItems(sql: string[], params: unknown[]): Promise<number>;
+  getPaginatedItems(paginationDto: PaginationDto, sql: string[], params: unknown[]): Promise<T[]>;
   paginate(
     items: T[],
     totalItems: number,

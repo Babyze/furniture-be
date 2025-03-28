@@ -24,6 +24,7 @@ export const SELLER_ROUTE_NAME = {
   PRODUCT: {
     ROOT: '/products',
     CREATE: '',
+    GET: '',
     IMAGES: `/:productId/images`,
   },
 };
