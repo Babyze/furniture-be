@@ -1,25 +1,28 @@
 import { SELLER_ROUTE_NAME } from '@src/constant/route-name.constant';
+import { ProductImageController } from '@src/controllers/seller/product-image.controller';
 import { ProductController } from '@src/controllers/seller/product.controller';
 import { CreateProductDto } from '@src/dto/seller/product/create-product.dto';
-import { validateJwtMiddleware } from '@src/middlewares/validate-jwt.middleware';
+import { UploadProductImageRequestParamsDto } from '@src/dto/seller/product/upload-product-image.dto';
+import { upload } from '@src/middlewares/upload.middleware';
 import { validateRequest } from '@src/middlewares/validate-request.middleware';
 import { CategoryAreaRepository } from '@src/repositories/category-area.repository';
+import { ProductImageRepository } from '@src/repositories/product-image.repository';
 import { ProductRepository } from '@src/repositories/product.repository';
 import { SKURepository } from '@src/repositories/sku.repository';
 import { SPUAttributeRepository } from '@src/repositories/spu-attribute.repository';
 import { SPURepository } from '@src/repositories/spu.repository';
-import { SellerJwtService } from '@src/services/seller/auth/jwt.service';
+import { ProductImageService } from '@src/services/seller/product-image.service';
 import { ProductService } from '@src/services/seller/product.service';
 import { Router } from 'express';
 
 const router = Router();
 
-const sellerJwtService = new SellerJwtService();
 const productRepository = new ProductRepository();
 const spuRepository = new SPURepository();
 const skuRepository = new SKURepository();
 const spuAttributeRepository = new SPUAttributeRepository();
 const categoryAreaRepository = new CategoryAreaRepository();
+const productImageRepository = new ProductImageRepository();
 
 const productService = new ProductService(
   productRepository,
@@ -29,13 +32,22 @@ const productService = new ProductService(
   categoryAreaRepository,
 );
 
+const productImageService = new ProductImageService(productImageRepository, productRepository);
+
 const productController = new ProductController(productService);
+const productImageController = new ProductImageController(productImageService);
 
 router.post(
   SELLER_ROUTE_NAME.PRODUCT.CREATE,
-  validateJwtMiddleware(sellerJwtService),
-  validateRequest(CreateProductDto),
+  validateRequest({ body: CreateProductDto }),
   productController.createProduct.bind(productController),
+);
+
+router.put(
+  `${SELLER_ROUTE_NAME.PRODUCT.IMAGES}`,
+  validateRequest({ params: UploadProductImageRequestParamsDto }),
+  upload.single('image'),
+  productImageController.uploadProductImage.bind(productImageController),
 );
 
 export default router;

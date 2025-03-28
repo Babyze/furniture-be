@@ -16,13 +16,13 @@ const sellerAuthController = new SellerAuthController(sellerAuthService);
 
 router.post(
   SELLER_ROUTE_NAME.AUTH.SIGN_IN,
-  validateRequest(SellerSignInRequestDto),
+  validateRequest({ body: SellerSignInRequestDto }),
   sellerAuthController.signIn.bind(sellerAuthController),
 );
 
 router.post(
   SELLER_ROUTE_NAME.AUTH.REFRESH_TOKEN,
-  validateRequest(SellerRefreshTokenRequestDto),
+  validateRequest({ body: SellerRefreshTokenRequestDto }),
   sellerAuthController.refreshToken.bind(sellerAuthController),
 );
 
