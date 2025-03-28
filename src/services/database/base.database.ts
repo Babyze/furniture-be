@@ -14,7 +14,7 @@ export interface IDatabase<T> {
   transaction(queries: { sql: string; params: any[] }[]): Promise<boolean>;
   getTotalItems(sql: string[], params: unknown[]): Promise<number>;
   getPaginatedItems(paginationDto: PaginationDto, sql: string[], params: unknown[]): Promise<T[]>;
-  paginate(
+  paginate<T>(
     items: T[],
     totalItems: number,
     paginationDto: PaginationDto,

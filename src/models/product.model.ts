@@ -9,3 +9,7 @@ export interface Product extends IBaseModel {
   categoryId: number;
   category_areaId: number;
 }
+
+export interface ProductWithStock extends Product {
+  stock: number;
+}

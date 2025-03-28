@@ -48,7 +48,7 @@ describe('ProductService', () => {
       description: 'Test Description',
       measurements: '17 1/2x20 5/8',
       categoryId: 1,
-      categoryAreaIds: [1, 2],
+      categoryAreaId: [1, 2],
       spus: [
         {
           name: 'Test SPU',

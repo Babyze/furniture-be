@@ -1,6 +1,6 @@
 import { HTTP_STATUS } from '@src/constant/http-status.constant';
 import { CreateProductDto } from '@src/dto/seller/product/create-product.dto';
-import { GetProductsDto } from '@src/dto/seller/product/get-products.dto';
+import { GetProductsRequestQueryDto } from '@src/dto/seller/product/get-products.dto';
 import { ProductService } from '@src/services/seller/product.service';
 import { NextFunction, Request, Response } from 'express';
 
@@ -26,14 +26,14 @@ export class ProductController {
   };
 
   getProducts = async (
-    req: Request<object, object, object, GetProductsDto>,
+    req: Request<object, object, object, GetProductsRequestQueryDto>,
     res: Response,
     next: NextFunction,
   ): Promise<void> => {
     try {
       const sellerId = req.user?.id;
 
-      const products = await this.productService.getProducts(sellerId, req.query as GetProductsDto);
+      const products = await this.productService.getProducts(sellerId, req.query);
       res.status(HTTP_STATUS.OK).json(products);
     } catch (error) {
       next(error);

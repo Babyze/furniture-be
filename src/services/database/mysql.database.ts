@@ -110,7 +110,7 @@ export class MysqlDatabase<T> implements IDatabase<T> {
     return items;
   }
 
-  async paginate(
+  async paginate<T>(
     items: T[],
     totalItems: number,
     paginationDto: PaginationDto,
