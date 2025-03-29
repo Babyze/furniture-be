@@ -15,6 +15,10 @@ import { ProductImageService } from '@src/services/seller/product-image.service'
 import { ProductService } from '@src/services/seller/product.service';
 import { Router } from 'express';
 import { upload } from '@src/middlewares/upload.middleware';
+import { GetProductPathParamsDto } from '@src/dto/seller/product/get-product.dto';
+import { GetSPUsRequestParamsDto } from '@src/dto/seller/spu/get-spus.dto';
+import { SPUController } from '@src/controllers/seller/spu.controller';
+import { SPUService } from '@src/services/seller/spu.service';
 
 const router = Router();
 
@@ -32,11 +36,12 @@ const productService = new ProductService(
   spuAttributeRepository,
   categoryAreaRepository,
 );
-
 const productImageService = new ProductImageService(productImageRepository, productRepository);
+const spuService = new SPUService(spuRepository, skuRepository);
 
 const productController = new ProductController(productService);
 const productImageController = new ProductImageController(productImageService);
+const spuController = new SPUController(spuService);
 
 router.post(
   SELLER_ROUTE_NAME.PRODUCT.CREATE,
@@ -55,6 +60,22 @@ router.get(
   SELLER_ROUTE_NAME.PRODUCT.GET,
   validateRequest({ query: GetProductsRequestQueryDto }),
   productController.getProducts.bind(productController),
+);
+
+router.get(
+  SELLER_ROUTE_NAME.PRODUCT.GET_DETAIL,
+  validateRequest({
+    params: GetProductPathParamsDto,
+  }),
+  productController.getProduct.bind(productController),
+);
+
+router.get(
+  SELLER_ROUTE_NAME.PRODUCT.GET_DETAIL_SPUS,
+  validateRequest({
+    params: GetSPUsRequestParamsDto,
+  }),
+  spuController.getSPUs.bind(spuController),
 );
 
 export default router;

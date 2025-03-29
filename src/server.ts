@@ -9,15 +9,20 @@ import sellerRoute from '@src/routes/seller/route';
 import compression from 'compression';
 import cors from 'cors';
 import express from 'express';
-import helmet from 'helmet';
 import { listRoutes } from './utils/server.util';
 
 // Express Initialize
 const app = express();
 
 // Middleware
-app.use(helmet());
-app.use(cors());
+
+app.use(
+  cors({
+    origin: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: '*',
+  }),
+);
 app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

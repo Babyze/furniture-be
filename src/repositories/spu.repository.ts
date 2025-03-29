@@ -6,4 +6,10 @@ export class SPURepository extends BaseRepository<SPU> {
   constructor() {
     super(TABLE_NAME.SPU_TABLE);
   }
+
+  async getSPUsByProductId(productId: number): Promise<SPU[]> {
+    const sql = [`SELECT *`, `FROM ${this.tableName}`, `WHERE product_id = ?`];
+    const params = [productId];
+    return this.query(sql.join(' '), params);
+  }
 }

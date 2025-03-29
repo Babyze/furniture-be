@@ -3,7 +3,6 @@ import {
   IsArray,
   IsNotEmpty,
   IsNumber,
-  IsObject,
   IsOptional,
   IsString,
   ValidateNested,
@@ -14,12 +13,6 @@ export class CreateSPUDto {
   @IsNotEmpty()
   name!: string;
 
-  @IsObject()
-  @Type(() => CreateSKUDto)
-  sku!: CreateSKUDto;
-}
-
-export class CreateSKUDto {
   @IsNumber()
   @IsNotEmpty()
   price!: number;
