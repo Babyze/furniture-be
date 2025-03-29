@@ -1,8 +1,13 @@
 import { TABLE_NAME } from '@src/constant/table-name.constant';
+import { PaginationResult } from '@src/dto/common/pagination.dto';
+import {
+  GetProductPathParamsDto,
+  GetProductResponseDto,
+} from '@src/dto/seller/product/get-product.dto';
 import { GetProductsRequestQueryDto } from '@src/dto/seller/product/get-products.dto';
+import { NotFoundError } from '@src/errors/http.error';
 import { Product, ProductWithStock } from '@src/models/product.model';
 import { BaseRepository } from './base/base.repository';
-import { PaginationResult } from '@src/dto/common/pagination.dto';
 
 export class ProductRepository extends BaseRepository<Product> {
   constructor() {
@@ -46,5 +51,27 @@ export class ProductRepository extends BaseRepository<Product> {
     const totalItems = await this.getTotalItems(sql, params);
 
     return this.paginate(items, totalItems, getProductsDto);
+  }
+
+  async getProduct(
+    sellerId: number,
+    getProductDto: GetProductPathParamsDto,
+  ): Promise<GetProductResponseDto> {
+    const sql = [
+      `SELECT p.*, pi.image_url`,
+      `FROM ${this.tableName} p`,
+      `LEFT JOIN ${TABLE_NAME.PRODUCT_IMAGE_TABLE} pi ON p.id = pi.product_id`,
+      `WHERE p.seller_id = ?`,
+      `AND p.id = ?`,
+    ];
+    const params = [sellerId, getProductDto.productId];
+
+    const product = (await this.query(sql.join(' '), params))[0];
+
+    if (!product) {
+      throw new NotFoundError('Product not found');
+    }
+
+    return product as GetProductResponseDto;
   }
 }

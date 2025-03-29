@@ -4,6 +4,10 @@ import {
   CreateProductResponseDto,
 } from '@src/dto/seller/product/create-product.dto';
 import {
+  GetProductPathParamsDto,
+  GetProductResponseDto,
+} from '@src/dto/seller/product/get-product.dto';
+import {
   GetProductsRequestQueryDto,
   GetProductsResponseDto,
 } from '@src/dto/seller/product/get-products.dto';
@@ -65,7 +69,7 @@ export class ProductService {
           `INSERT INTO ${TABLE_NAME.SKU_TABLE} 
           (spu_id, price, quantity) 
           VALUES (?, ?, ?)`,
-          [spuId, spuDto.sku.price, spuDto.sku.quantity],
+          [spuId, spuDto.price, spuDto.quantity],
         );
       }
 
@@ -87,5 +91,12 @@ export class ProductService {
     getProductsDto: GetProductsRequestQueryDto,
   ): Promise<GetProductsResponseDto> {
     return this.productRepository.getProducts(sellerId, getProductsDto);
+  }
+
+  async getProduct(
+    sellerId: number,
+    getProductDto: GetProductPathParamsDto,
+  ): Promise<GetProductResponseDto> {
+    return this.productRepository.getProduct(sellerId, getProductDto);
   }
 }

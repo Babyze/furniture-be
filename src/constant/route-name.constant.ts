@@ -25,6 +25,8 @@ export const SELLER_ROUTE_NAME = {
     ROOT: '/products',
     CREATE: '',
     GET: '',
+    GET_DETAIL: '/:productId',
+    GET_DETAIL_SPUS: '/:productId/spus',
     IMAGES: `/:productId/images`,
   },
 };

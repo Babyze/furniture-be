@@ -1,7 +1,7 @@
 import { Dayjs } from 'dayjs';
 
 export interface IBaseModel {
-  id: string;
+  id: number;
   createdDate: Dayjs;
   updatedDate: Dayjs;
 }
