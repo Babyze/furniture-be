@@ -19,6 +19,11 @@ import { GetProductPathParamsDto } from '@src/dto/seller/product/get-product.dto
 import { GetSPUsRequestParamsDto } from '@src/dto/seller/spu/get-spus.dto';
 import { SPUController } from '@src/controllers/seller/spu.controller';
 import { SPUService } from '@src/services/seller/spu.service';
+import {
+  UpdateProductDto,
+  UpdateProductParamsDto,
+} from '@src/dto/seller/product/update-product.dto';
+import { DeleteProductImageRequestParamsDto } from '@src/dto/seller/product/delete-product-image.dto';
 
 const router = Router();
 
@@ -76,6 +81,18 @@ router.get(
     params: GetSPUsRequestParamsDto,
   }),
   spuController.getSPUs.bind(spuController),
+);
+
+router.put(
+  `${SELLER_ROUTE_NAME.PRODUCT.UPDATE}`,
+  validateRequest({ params: UpdateProductParamsDto, body: UpdateProductDto }),
+  productController.updateProduct.bind(productController),
+);
+
+router.delete(
+  `${SELLER_ROUTE_NAME.PRODUCT.DELETE_IMAGE}`,
+  validateRequest({ params: DeleteProductImageRequestParamsDto }),
+  productImageController.deleteProductImage.bind(productImageController),
 );
 
 export default router;
