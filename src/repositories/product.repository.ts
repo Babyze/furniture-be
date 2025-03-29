@@ -39,6 +39,8 @@ export class ProductRepository extends BaseRepository<Product> {
       params.push(getProductsDto.categoryAreaId);
     }
 
+    sql.push(`ORDER BY p.id DESC`);
+
     const items = (await this.getPaginatedItems(getProductsDto, sql, params)) as ProductWithStock[];
 
     const totalItems = await this.getTotalItems(sql, params);
