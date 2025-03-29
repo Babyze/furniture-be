@@ -2,6 +2,10 @@ import { HTTP_STATUS } from '@src/constant/http-status.constant';
 import { CreateProductDto } from '@src/dto/seller/product/create-product.dto';
 import { GetProductPathParamsDto } from '@src/dto/seller/product/get-product.dto';
 import { GetProductsRequestQueryDto } from '@src/dto/seller/product/get-products.dto';
+import {
+  UpdateProductDto,
+  UpdateProductParamsDto,
+} from '@src/dto/seller/product/update-product.dto';
 import { ProductService } from '@src/services/seller/product.service';
 import { NextFunction, Request, Response } from 'express';
 
@@ -50,6 +54,25 @@ export class ProductController {
       const sellerId = req.user?.id;
 
       const product = await this.productService.getProduct(sellerId, req.params);
+      res.status(HTTP_STATUS.OK).json(product);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  updateProduct = async (
+    req: Request<UpdateProductParamsDto, object, UpdateProductDto>,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    try {
+      const sellerId = req.user?.id;
+
+      const product = await this.productService.updateProduct(
+        sellerId,
+        req.params.productId,
+        req.body,
+      );
       res.status(HTTP_STATUS.OK).json(product);
     } catch (error) {
       next(error);

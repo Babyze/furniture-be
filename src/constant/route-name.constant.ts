@@ -28,5 +28,7 @@ export const SELLER_ROUTE_NAME = {
     GET_DETAIL: '/:productId',
     GET_DETAIL_SPUS: '/:productId/spus',
     IMAGES: `/:productId/images`,
+    UPDATE: '/:productId',
+    DELETE_IMAGE: '/:productId/images',
   },
 };
