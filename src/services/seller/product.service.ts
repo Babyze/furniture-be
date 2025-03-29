@@ -49,7 +49,7 @@ export class ProductService {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const productId = (productResult as any).insertId;
 
-      // 2. Create SPUs, SKUs and SPU Attributes
+      // 2. Create SPUs, SKUs
       for (const spuDto of createProductDto.spus) {
         // Create SPU
         const [spuResult] = await connection.query(
@@ -61,36 +61,17 @@ export class ProductService {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const spuId = (spuResult as any).insertId;
 
-        // Create SPU Attributes
-        const spuAttributeValues = spuDto.attributes.map((attr) => ({
-          spuId: spuId,
-          attributeName: attr.attributeName,
-          attributeValue: attr.attributeValue,
-        }));
-        await connection.query(
-          `INSERT INTO ${TABLE_NAME.SPU_ATTRIBUTE_TABLE} 
-          (spu_id, attribute_name, attribute_value) 
-          VALUES ?`,
-          [spuAttributeValues.map((v) => [v.spuId, v.attributeName, v.attributeValue])],
-        );
-
-        // Create SKUs
-        const skuValues = spuDto.skus.map((sku) => ({
-          spuId: spuId,
-          price: sku.price,
-          quantity: sku.quantity,
-        }));
         await connection.query(
           `INSERT INTO ${TABLE_NAME.SKU_TABLE} 
           (spu_id, price, quantity) 
-          VALUES ?`,
-          [skuValues.map((v) => [v.spuId, v.price, v.quantity])],
+          VALUES (?, ?, ?)`,
+          [spuId, spuDto.sku.price, spuDto.sku.quantity],
         );
       }
 
       await connection.commit();
       return {
-        productId,
+        id: productId,
       };
     } catch (error) {
       console.log(error);

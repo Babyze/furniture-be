@@ -1,37 +1,22 @@
-import {
-  IsString,
-  IsNumber,
-  IsOptional,
-  IsArray,
-  ValidateNested,
-  IsNotEmpty,
-} from 'class-validator';
 import { Type } from 'class-transformer';
-
-export class CreateSPUAttributeDto {
-  @IsString()
-  @IsNotEmpty()
-  attributeName!: string;
-
-  @IsString()
-  @IsNotEmpty()
-  attributeValue!: string;
-}
+import {
+  IsArray,
+  IsNotEmpty,
+  IsNumber,
+  IsObject,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 
 export class CreateSPUDto {
   @IsString()
   @IsNotEmpty()
   name!: string;
 
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => CreateSPUAttributeDto)
-  attributes!: CreateSPUAttributeDto[];
-
-  @IsArray()
-  @ValidateNested({ each: true })
+  @IsObject()
   @Type(() => CreateSKUDto)
-  skus!: CreateSKUDto[];
+  sku!: CreateSKUDto;
 }
 
 export class CreateSKUDto {
@@ -58,10 +43,12 @@ export class CreateProductDto {
   measurements?: string;
 
   @IsNumber()
+  @Type(() => Number)
   @IsNotEmpty()
   categoryId!: number;
 
   @IsNumber()
+  @Type(() => Number)
   @IsNotEmpty()
   categoryAreaId!: number;
 
@@ -73,5 +60,5 @@ export class CreateProductDto {
 }
 
 export class CreateProductResponseDto {
-  constructor(public readonly productId: number) {}
+  constructor(public readonly id: number) {}
 }

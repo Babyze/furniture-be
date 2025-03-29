@@ -58,7 +58,7 @@ describe('ProductService', () => {
               attributeValue: 'Red',
             },
           ],
-          skus: [
+          sku: [
             {
               price: 100,
               quantity: 10,

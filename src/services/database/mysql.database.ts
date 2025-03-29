@@ -102,7 +102,7 @@ export class MysqlDatabase<T> implements IDatabase<T> {
     const offset = getOffset(page, limit);
 
     const query = `
-          SELECT * FROM (${sql.join(' ')}) as temp
+          ${sql.join(' ')}
           LIMIT ? OFFSET ?
         `;
 
