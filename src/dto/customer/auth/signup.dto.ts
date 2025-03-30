@@ -1,3 +1,4 @@
+import { Customer } from '@src/models/customer.model';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export class CustomerSignUpRequestDto {
@@ -11,18 +12,11 @@ export class CustomerSignUpRequestDto {
 
   @IsString()
   @IsNotEmpty()
-  username!: string;
-
-  @IsString()
-  @IsNotEmpty()
   password!: string;
 }
 
-export class CustomerSignUpResponseDto {
-  constructor(
-    public id: number,
-    public fullName: string,
-    public accessToken: string,
-    public refreshToken: string,
-  ) {}
+export interface CustomerSignUpResponseDto {
+  accessToken: string;
+  refreshToken: string;
+  user: Pick<Customer, 'id' | 'email' | 'fullName'>;
 }
