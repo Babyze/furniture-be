@@ -20,7 +20,7 @@ export class CustomerSignUpRequestDto {
 
 export class CustomerSignUpResponseDto {
   constructor(
-    public id: string,
+    public id: number,
     public fullName: string,
     public accessToken: string,
     public refreshToken: string,

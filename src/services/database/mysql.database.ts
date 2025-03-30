@@ -32,7 +32,7 @@ export class MysqlDatabase<T> implements IDatabase<T> {
     return results.length > 0 ? convertDateStringToDate(toCamelCase(results[0])) : null;
   }
 
-  async insert(data: Partial<T> & Pick<IBaseModel, 'id'>): Promise<T> {
+  async insert(data: Partial<T>): Promise<T> {
     const keys = toSnakeCase(Object.keys(data)).join(', ');
     const values = Object.values(data);
     const placeholders = values.map(() => '?').join(', ');

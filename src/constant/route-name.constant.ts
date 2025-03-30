@@ -5,6 +5,14 @@ export const CUSTOMER_ROUTE_NAME = {
     SIGN_IN: '/signin',
     REFRESH_TOKEN: '/refresh-token',
   },
+  PRODUCT: {
+    ROOT: '/products',
+    GET: '',
+  },
+  CATEGORY: {
+    ROOT: '/categories',
+    GET: '',
+  },
 };
 
 export const SELLER_ROUTE_NAME = {
