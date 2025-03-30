@@ -95,7 +95,7 @@ export class ProductService {
     sellerId: number,
     getProductsDto: GetProductsRequestQueryDto,
   ): Promise<GetProductsResponseDto> {
-    return this.productRepository.getProducts(sellerId, getProductsDto);
+    return this.productRepository.getProducts(getProductsDto, sellerId);
   }
 
   async getProduct(

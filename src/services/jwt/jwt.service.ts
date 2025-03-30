@@ -59,7 +59,7 @@ export class JwtService {
 }
 
 export interface TokenPayload {
-  id: string;
+  id: number;
   email: string;
   [key: string]: unknown;
 }

@@ -11,7 +11,6 @@ import { ConflictError, UnauthorizedError } from '@src/errors/http.error';
 import { Customer } from '@src/models/customer.model';
 import { CustomerRepository } from '@src/repositories/customer.repository';
 import { comparePassword, hashPassword } from '@src/utils/password.util';
-import { generateUUID } from '@src/utils/uuid.util';
 import dayjs from 'dayjs';
 import jwt from 'jsonwebtoken';
 import { CustomerJwtService } from './jwt.service';
@@ -37,8 +36,7 @@ export class CustomerAuthService {
 
     const hashedPassword = await hashPassword(signUpDto.password);
 
-    const newUser: Customer = {
-      id: generateUUID(),
+    const newUser: Omit<Customer, 'id'> = {
       email: signUpDto.email,
       password: hashedPassword,
       fullName: signUpDto.fullName,

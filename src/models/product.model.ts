@@ -7,9 +7,12 @@ export interface Product extends IBaseModel {
   measurements: string;
   sellerId: number;
   categoryId: number;
-  category_areaId: number;
+  categoryAreaId: number;
 }
 
 export interface ProductWithStock extends Product {
   stock: number;
+  imageUrl: string;
+  minPrice: number;
+  maxPrice: number;
 }
