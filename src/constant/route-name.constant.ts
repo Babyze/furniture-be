@@ -46,4 +46,8 @@ export const SELLER_ROUTE_NAME = {
     UPDATE: '/:productId',
     DELETE_IMAGE: '/:productId/images',
   },
+  ORDER: {
+    ROOT: '/orders',
+    GET: '',
+  },
 };
