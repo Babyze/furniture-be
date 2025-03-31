@@ -1,3 +1,4 @@
+import { GetProductResponseDto } from '@src/dto/customer/product/get-product.dto';
 import {
   GetProductItemResponseDto,
   GetProductsQueryDto,
@@ -34,6 +35,24 @@ export class ProductService {
     return {
       items,
       meta: results.meta,
+    };
+  }
+
+  async getProduct(id: number, hostname: string): Promise<GetProductResponseDto> {
+    const product = await this.productRepository.getProduct({
+      productId: id,
+    });
+    const imageUrl = product.imageUrl ? `${hostname}/${product.imageUrl}` : '';
+
+    return {
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      measurements: product.measurements,
+      imageUrl: imageUrl,
+      categoryName: product.categoryName,
+      categoryAreaName: product.categoryAreaName,
     };
   }
 }
