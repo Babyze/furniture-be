@@ -9,6 +9,8 @@ import { OrderItemRepository } from '@src/repositories/order-item.repository';
 import { OrderRepository } from '@src/repositories/order.repository';
 import { SKURepository } from '@src/repositories/sku.repository';
 import mysqlPool from '@src/services/database/pool/mysql.pool';
+import { TokenPayload } from '@src/services/jwt/jwt.service';
+import { MailService } from '@src/services/mail.service';
 import { RowDataPacket } from 'mysql2';
 
 export class OrderService {
@@ -16,9 +18,10 @@ export class OrderService {
     private readonly orderRepository: OrderRepository,
     private readonly orderItemRepository: OrderItemRepository,
     private readonly skuRepository: SKURepository,
+    private readonly mailService: MailService,
   ) {}
 
-  async placeOrder(customerId: number, placeOrderDto: PlaceOrderRequestDto): Promise<Order> {
+  async placeOrder(customer: TokenPayload, placeOrderDto: PlaceOrderRequestDto): Promise<Order> {
     const connection = await mysqlPool.getConnection();
     try {
       await connection.beginTransaction();
@@ -47,7 +50,7 @@ export class OrderService {
       const [orderResult] = await connection.query(
         `INSERT INTO ${TABLE_NAME.ORDERS_TABLE} (customer_id, total_price, status, address, phone_number, full_name) VALUES (?, ?, ?, ?, ?, ?)`,
         [
-          customerId,
+          customer.id,
           totalPrice,
           ORDER_STATUS.PENDING,
           placeOrderDto.information.address,
@@ -96,6 +99,11 @@ export class OrderService {
       throw error;
     } finally {
       connection.release();
+      this.mailService.sendmail({
+        to: customer.email,
+        subject: '[Furniture Store] Your Order Has Been Placed',
+        text: `Your order has been created`,
+      });
     }
   }
 

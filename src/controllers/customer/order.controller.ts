@@ -3,6 +3,7 @@ import { OrderService } from '@src/services/customer/order/order.service';
 import { PlaceOrderRequestDto } from '@src/dto/customer/order/place-order.dto';
 import { HTTP_STATUS } from '@src/constant/http-status.constant';
 import { GetOrdersQueryDto } from '@src/dto/customer/order/get-orders.dto';
+import { TokenPayload } from '@src/services/jwt/jwt.service';
 
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
@@ -13,9 +14,8 @@ export class OrderController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const customerId = req.user?.id;
       const placeOrderDto = req.body as PlaceOrderRequestDto;
-      await this.orderService.placeOrder(customerId, placeOrderDto);
+      await this.orderService.placeOrder(req.user as TokenPayload, placeOrderDto);
 
       res.status(HTTP_STATUS.CREATED).json({
         message: 'Order placed successfully',

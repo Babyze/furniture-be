@@ -17,6 +17,8 @@ const requiredEnvVars = [
   'JWT_SELLER_REFRESH_SECRET',
   'JWT_SELLER_EXPIRES_IN',
   'JWT_SELLER_REFRESH_EXPIRES_IN',
+  'MAIL_USERNAME',
+  'MAIL_PASSWORD',
 ];
 
 for (const envVar of requiredEnvVars) {
@@ -42,4 +44,6 @@ export const env = {
   JWT_SELLER_REFRESH_EXPIRES_IN: process.env.JWT_SELLER_REFRESH_EXPIRES_IN ?? '7d',
   FILE_UPLOAD_LIMIT_SIZE: Number(process.env.FILE_UPLOAD_LIMIT_SIZE ?? 5),
   FILE_UPLOAD_DIR: process.env.FILE_UPLOAD_DIR ?? 'uploads',
+  MAIL_USERNAME: process.env.MAIL_USERNAME ?? '',
+  MAIL_PASSWORD: process.env.MAIL_PASSWORD ?? '',
 };

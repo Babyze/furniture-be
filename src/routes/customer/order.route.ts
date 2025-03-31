@@ -8,12 +8,18 @@ import { OrderRepository } from '@src/repositories/order.repository';
 import { OrderItemRepository } from '@src/repositories/order-item.repository';
 import { SKURepository } from '@src/repositories/sku.repository';
 import { GetOrdersQueryDto } from '@src/dto/customer/order/get-orders.dto';
-
+import { MailService } from '@src/services/mail.service';
 const router = Router();
 const orderRepository = new OrderRepository();
 const orderItemRepository = new OrderItemRepository();
 const skuRepository = new SKURepository();
-const orderService = new OrderService(orderRepository, orderItemRepository, skuRepository);
+const mailService = new MailService();
+const orderService = new OrderService(
+  orderRepository,
+  orderItemRepository,
+  skuRepository,
+  mailService,
+);
 const orderController = new OrderController(orderService);
 
 router.post(
