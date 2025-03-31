@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ORDER_STATUS } from '@src/constant/order-status.constant';
 import { TABLE_NAME } from '@src/constant/table-name.constant';
+import { GetOrdersQueryDto, GetOrdersResponseDto } from '@src/dto/customer/order/get-orders.dto';
 import { PlaceOrderRequestDto } from '@src/dto/customer/order/place-order.dto';
 import { ConflictError } from '@src/errors/http.error';
 import { Order } from '@src/models/order.model';
@@ -96,5 +97,12 @@ export class OrderService {
     } finally {
       connection.release();
     }
+  }
+
+  async getOrders(customerId: number, query: GetOrdersQueryDto): Promise<GetOrdersResponseDto> {
+    return this.orderRepository.getOrders({
+      ...query,
+      customerId,
+    });
   }
 }

@@ -7,6 +7,7 @@ import { OrderService } from '@src/services/customer/order/order.service';
 import { OrderRepository } from '@src/repositories/order.repository';
 import { OrderItemRepository } from '@src/repositories/order-item.repository';
 import { SKURepository } from '@src/repositories/sku.repository';
+import { GetOrdersQueryDto } from '@src/dto/customer/order/get-orders.dto';
 
 const router = Router();
 const orderRepository = new OrderRepository();
@@ -19,6 +20,12 @@ router.post(
   CUSTOMER_ROUTE_NAME.ORDER.PLACE_ORDER,
   validateRequest({ body: PlaceOrderRequestDto }),
   orderController.placeOrder.bind(orderController),
+);
+
+router.get(
+  CUSTOMER_ROUTE_NAME.ORDER.GET_ORDERS,
+  validateRequest({ query: GetOrdersQueryDto }),
+  orderController.getOrders.bind(orderController),
 );
 
 export default router;
