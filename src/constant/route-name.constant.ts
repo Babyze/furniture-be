@@ -16,8 +16,9 @@ export const CUSTOMER_ROUTE_NAME = {
     GET: '',
   },
   ORDER: {
-    ROOT: '/order',
+    ROOT: '/orders',
     PLACE_ORDER: '',
+    GET_ORDERS: '',
   },
 };
 
