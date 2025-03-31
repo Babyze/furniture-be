@@ -10,4 +10,8 @@ export class GetSPUsRequestParamsDto {
   productId!: number;
 }
 
-export type GetSPUsResponseDto = Pick<SPU, 'name'> & Pick<SKU, 'price' | 'quantity'>;
+export type GetSPUsResponseDto = Pick<SPU, 'name'> &
+  Pick<SKU, 'price' | 'quantity'> & {
+    id: number;
+    skuId: number;
+  };
