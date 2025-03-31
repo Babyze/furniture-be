@@ -1,10 +1,12 @@
 {
   "name": "furniture-be",
-  "type": "module",
   "version": "1.0.0",
+  "_moduleAliases": {
+    "@src": "dist/src"
+  },
   "scripts": {
     "build": "tsc",
-    "start": "node dist/server.js",
+    "start": "node -r module-alias/register dist/src/server.js",
     "dev": "tsx watch --include \"./src/**/*\" --include \"./src/*\" src/server.ts",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
@@ -35,10 +37,12 @@
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
+    "module-alias": "^2.2.3",
     "multer": "^1.4.5-lts.2",
     "mysql2": "^3.14.0",
     "nodemailer": "^6.10.0",
     "reflect-metadata": "^0.2.2",
+    "tsconfig-paths": "^4.2.0",
     "tsx": "^4.19.3",
     "uuid": "^11.1.0"
   },
@@ -52,6 +56,7 @@
     "@types/jest": "^29.5.14",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/lodash": "^4.17.16",
+    "@types/module-alias": "^2.0.4",
     "@types/multer": "^1.4.12",
     "@types/node": "^22.13.13",
     "@types/nodemailer": "^6.4.17",
