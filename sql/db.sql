@@ -82,6 +82,9 @@ CREATE TABLE orders (
   customer_id INT NOT NULL,
   total_price DECIMAL(10, 2) NOT NULL,
   status ENUM('pending', 'confirmed', 'shipped', 'cancelled') NOT NULL DEFAULT 'pending',
+  address VARCHAR(255) NOT NULL,
+  phone_number VARCHAR(20) NOT NULL,
+  full_name VARCHAR(255) NOT NULL,
   created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (customer_id) REFERENCES customer(id)

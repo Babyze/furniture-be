@@ -15,6 +15,10 @@ export const CUSTOMER_ROUTE_NAME = {
     ROOT: '/categories',
     GET: '',
   },
+  ORDER: {
+    ROOT: '/order',
+    PLACE_ORDER: '',
+  },
 };
 
 export const SELLER_ROUTE_NAME = {

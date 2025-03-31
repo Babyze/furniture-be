@@ -5,4 +5,7 @@ export interface Order extends IBaseModel {
   customerId: number;
   totalPrice: number;
   status: ORDER_STATUS;
+  address: string;
+  phoneNumber: string;
+  fullName: string;
 }

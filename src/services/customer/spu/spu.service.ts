@@ -20,6 +20,8 @@ export class SPUService {
     return spus.map((spu) => {
       const skusBySPU = skus.find((sku) => sku.spuId === spu.id);
       return {
+        id: spu.id,
+        skuId: skusBySPU?.id ?? 0,
         name: spu.name,
         price: skusBySPU?.price ?? 0,
         quantity: skusBySPU?.quantity ?? 0,
