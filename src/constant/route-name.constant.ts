@@ -8,6 +8,8 @@ export const CUSTOMER_ROUTE_NAME = {
   PRODUCT: {
     ROOT: '/products',
     GET: '',
+    GET_DETAIL: '/:id',
+    GET_DETAIL_SPUS: '/:id/spus',
   },
   CATEGORY: {
     ROOT: '/categories',

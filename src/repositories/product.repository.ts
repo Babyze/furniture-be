@@ -1,9 +1,5 @@
 import { TABLE_NAME } from '@src/constant/table-name.constant';
 import { PaginationDto, PaginationResult } from '@src/dto/common/pagination.dto';
-import {
-  GetProductPathParamsDto,
-  GetProductResponseDto,
-} from '@src/dto/seller/product/get-product.dto';
 import { NotFoundError } from '@src/errors/http.error';
 import { Product, ProductWithStock } from '@src/models/product.model';
 import { BaseRepository } from './base/base.repository';
@@ -11,6 +7,16 @@ import { BaseRepository } from './base/base.repository';
 export interface GetProductsFilter extends PaginationDto {
   categoryId?: number;
   categoryAreaId?: number;
+}
+
+export interface GetProductOptions {
+  productId: number;
+  sellerId?: number;
+}
+export interface GetProductResponse extends Product {
+  categoryName: string;
+  categoryAreaName: string;
+  imageUrl: string;
 }
 
 export class ProductRepository extends BaseRepository<Product> {
@@ -76,18 +82,21 @@ export class ProductRepository extends BaseRepository<Product> {
     return this.paginate(items, totalItems, getProductsFiltersDto);
   }
 
-  async getProduct(
-    sellerId: number,
-    getProductDto: GetProductPathParamsDto,
-  ): Promise<GetProductResponseDto> {
+  async getProduct(options: GetProductOptions): Promise<GetProductResponse> {
     const sql = [
-      `SELECT p.*, pi.image_url`,
+      `SELECT p.*, pi.image_url, c.name as category_name, ca.name as category_area_name`,
       `FROM ${this.tableName} p`,
       `LEFT JOIN ${TABLE_NAME.PRODUCT_IMAGE_TABLE} pi ON p.id = pi.product_id`,
-      `WHERE p.seller_id = ?`,
-      `AND p.id = ?`,
+      `LEFT JOIN ${TABLE_NAME.CATEGORY_TABLE} c ON p.category_id = c.id`,
+      `LEFT JOIN ${TABLE_NAME.CATEGORY_AREA_TABLE} ca ON p.category_area_id = ca.id`,
+      `WHERE p.id = ?`,
     ];
-    const params = [sellerId, getProductDto.productId];
+    const params = [options.productId];
+
+    if (options.sellerId) {
+      sql.push(`AND p.seller_id = ?`);
+      params.push(options.sellerId);
+    }
 
     const product = (await this.query(sql.join(' '), params))[0];
 
@@ -95,6 +104,6 @@ export class ProductRepository extends BaseRepository<Product> {
       throw new NotFoundError('Product not found');
     }
 
-    return product as GetProductResponseDto;
+    return product as GetProductResponse;
   }
 }

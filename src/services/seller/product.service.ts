@@ -102,7 +102,10 @@ export class ProductService {
     sellerId: number,
     getProductDto: GetProductPathParamsDto,
   ): Promise<GetProductResponseDto> {
-    return this.productRepository.getProduct(sellerId, getProductDto);
+    return this.productRepository.getProduct({
+      sellerId,
+      productId: getProductDto.productId,
+    });
   }
 
   async updateProduct(
