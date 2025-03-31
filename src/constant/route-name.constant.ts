@@ -49,5 +49,6 @@ export const SELLER_ROUTE_NAME = {
   ORDER: {
     ROOT: '/orders',
     GET: '',
+    UPDATE: '/:id',
   },
 };
