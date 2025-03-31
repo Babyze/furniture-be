@@ -3,6 +3,8 @@ services:
     image: mysql
     container_name: furniture-database
     restart: always
+    networks:
+      - furniture-network
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: furniture
@@ -22,8 +24,14 @@ services:
       - .env
     container_name: furniture-be
     restart: always
+    networks:
+      - furniture-network
     ports:
       - "80:3000"
 
 volumes:
   mysql_data:
+
+
+networks:
+  furniture-network:
