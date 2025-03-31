@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const toCamelCase = (row: any) => {
   const newRow: any = {};
@@ -8,14 +10,18 @@ const toCamelCase = (row: any) => {
   return newRow;
 };
 
-const toDateStringToDate = (row: any) => {
+const toSnakeCase = (keys: string[]) => {
+  return keys.map((key) => key.replace(/([A-Z])/g, '_$1').toLowerCase());
+};
+
+const convertDateStringToDate = (row: any) => {
   for (const [key, value] of Object.entries(row)) {
     if (typeof value === 'string' && value.match(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/g)) {
-      row[key] = new Date(value);
+      row[key] = dayjs(value);
     }
   }
 
   return row;
 };
 
-export { toCamelCase, toDateStringToDate };
+export { toCamelCase, toSnakeCase, convertDateStringToDate };

@@ -21,13 +21,12 @@ export default [
     },
     rules: {
       ...tseslint.configs.recommended.rules,
-      'prettier/prettier': 'error',
       'no-console': 'off',
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       'no-var': 'error',
       'prefer-const': 'error',
       'prettier/prettier': ['error', { endOfLine: 'auto' }],
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }]
     },
   },
   prettierConfig,

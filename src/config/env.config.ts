@@ -1,0 +1,49 @@
+import 'dotenv/config';
+
+const requiredEnvVars = [
+  'PORT',
+  'DATABASE_HOST',
+  'DATABASE_PORT',
+  'DATABASE_USER',
+  'DATABASE_PASSWORD',
+  'DATABASE_NAME',
+  'FILE_UPLOAD_LIMIT_SIZE',
+  'FILE_UPLOAD_DIR',
+  'JWT_CUSTOMER_SECRET',
+  'JWT_CUSTOMER_REFRESH_SECRET',
+  'JWT_CUSTOMER_EXPIRES_IN',
+  'JWT_CUSTOMER_REFRESH_EXPIRES_IN',
+  'JWT_SELLER_SECRET',
+  'JWT_SELLER_REFRESH_SECRET',
+  'JWT_SELLER_EXPIRES_IN',
+  'JWT_SELLER_REFRESH_EXPIRES_IN',
+  'MAIL_USERNAME',
+  'MAIL_PASSWORD',
+];
+
+for (const envVar of requiredEnvVars) {
+  if (!process.env[envVar]) {
+    throw new Error(`Missing required environment variable: ${envVar}`);
+  }
+}
+
+export const env = {
+  PORT: process.env.PORT || 5000,
+  DATABASE_HOST: process.env.DATABASE_HOST,
+  DATABASE_PORT: Number(process.env.DATABASE_PORT ?? 3306),
+  DATABASE_USER: process.env.DATABASE_USER,
+  DATABASE_PASSWORD: process.env.DATABASE_PASSWORD,
+  DATABASE_NAME: process.env.DATABASE_NAME,
+  JWT_CUSTOMER_SECRET: process.env.JWT_CUSTOMER_SECRET ?? '',
+  JWT_CUSTOMER_REFRESH_SECRET: process.env.JWT_CUSTOMER_REFRESH_SECRET ?? '',
+  JWT_CUSTOMER_EXPIRES_IN: process.env.JWT_CUSTOMER_EXPIRES_IN ?? '1h',
+  JWT_CUSTOMER_REFRESH_EXPIRES_IN: process.env.JWT_CUSTOMER_REFRESH_EXPIRES_IN ?? '7d',
+  JWT_SELLER_SECRET: process.env.JWT_SELLER_SECRET ?? '',
+  JWT_SELLER_REFRESH_SECRET: process.env.JWT_SELLER_REFRESH_SECRET ?? '',
+  JWT_SELLER_EXPIRES_IN: process.env.JWT_SELLER_EXPIRES_IN ?? '1h',
+  JWT_SELLER_REFRESH_EXPIRES_IN: process.env.JWT_SELLER_REFRESH_EXPIRES_IN ?? '7d',
+  FILE_UPLOAD_LIMIT_SIZE: Number(process.env.FILE_UPLOAD_LIMIT_SIZE ?? 5),
+  FILE_UPLOAD_DIR: process.env.FILE_UPLOAD_DIR ?? 'uploads',
+  MAIL_USERNAME: process.env.MAIL_USERNAME ?? '',
+  MAIL_PASSWORD: process.env.MAIL_PASSWORD ?? '',
+};
