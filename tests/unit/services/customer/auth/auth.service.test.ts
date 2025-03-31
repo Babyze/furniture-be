@@ -38,11 +38,10 @@ describe('CustomerAuthService', () => {
     const mockSignUpData: CustomerSignUpRequestDto = {
       email: 'test@example.com',
       fullName: 'Test User',
-      username: 'testuser',
       password: 'password123',
     };
 
-    const mockUserId = '123e4567-e89b-12d3-a456-426614174000';
+    const mockUserId = 1;
     const mockHashedPassword = 'hashedPassword123';
     const mockTokens = {
       accessToken: 'mock-access-token',
@@ -70,10 +69,13 @@ describe('CustomerAuthService', () => {
       const result = await customerAuthService.signUp(mockSignUpData);
 
       expect(result).toEqual({
-        id: mockUserId,
-        fullName: mockSignUpData.fullName,
         accessToken: mockTokens.accessToken,
         refreshToken: mockTokens.refreshToken,
+        user: {
+          id: mockUserId,
+          fullName: mockSignUpData.fullName,
+          email: mockSignUpData.email,
+        },
       });
     });
 
@@ -100,7 +102,7 @@ describe('CustomerAuthService', () => {
       password: 'password123',
     };
 
-    const mockUserId = '123e4567-e89b-12d3-a456-426614174000';
+    const mockUserId = 1;
     const mockHashedPassword = 'hashedPassword123';
     const mockTokens = {
       accessToken: 'mock-access-token',
@@ -131,6 +133,11 @@ describe('CustomerAuthService', () => {
       expect(result).toEqual({
         accessToken: mockTokens.accessToken,
         refreshToken: mockTokens.refreshToken,
+        user: {
+          id: mockUserId,
+          fullName: 'Test User',
+          email: mockSignInData.email,
+        },
       });
     });
 
@@ -162,7 +169,7 @@ describe('CustomerAuthService', () => {
   describe('refreshToken', () => {
     it('should return new access token when refresh token is valid', async () => {
       const mockUser = {
-        id: '123',
+        id: 1,
         email: 'test@example.com',
         password: 'hashedPassword',
         fullName: 'Test User',
@@ -172,7 +179,7 @@ describe('CustomerAuthService', () => {
       };
 
       const mockDecodedToken = {
-        id: '123',
+        id: 1,
         email: 'test@example.com',
       };
 

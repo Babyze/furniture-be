@@ -16,7 +16,7 @@ describe('CustomerJwtService', () => {
   describe('generateTokenPair', () => {
     it('should generate access token and refresh token', () => {
       const mockPayload = {
-        id: '123',
+        id: 1,
         email: 'test@example.com',
       };
 

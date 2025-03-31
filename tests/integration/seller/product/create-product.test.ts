@@ -30,22 +30,12 @@ describe('Seller Product API', () => {
       description: 'Test Description',
       measurements: '10x20x30',
       categoryId: 1,
-      categoryAreaIds: [1, 2],
+      categoryAreaId: 2,
       spus: [
         {
           name: 'Test SPU',
-          attributes: [
-            {
-              attributeName: 'Color',
-              attributeValue: 'Red',
-            },
-          ],
-          skus: [
-            {
-              price: 100,
-              quantity: 10,
-            },
-          ],
+          price: 100,
+          quantity: 10,
         },
       ],
     };

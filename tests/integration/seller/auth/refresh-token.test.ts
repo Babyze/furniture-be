@@ -12,7 +12,7 @@ describe('POST /api/seller/auth/refresh-token', () => {
   let sellerJwtService: SellerJwtService;
   const request = supertest(app);
   const mockUser = {
-    id: '123',
+    id: 1,
     email: 'test@example.com',
   };
 
